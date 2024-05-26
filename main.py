@@ -1,3 +1,4 @@
+# Imports
 import os
 from dotenv import load_dotenv
 import asyncio
@@ -6,10 +7,27 @@ import nextcord
 import random
 import nacl
 import ffmpeg
+import mutagen
+from mutagen.mp3 import MP3
+from mutagen.wave import WAVE
 
-# Get Token
+# Unpack Environment
 load_dotenv("env/.env")
 TOKEN = os.getenv("TOKEN")
+SONGS = os.getenv("SONGS")
+
+# Generate Programming
+def generate_programming():
+    total_time = 0
+    track_1 = []
+    track_2 = []
+    track_3 = []
+
+    morning = f"./assets/overlays/morning_{random.randint(1, 2)}.wav"
+    morning_length = int(round(WAVE(morning).info.length, 3) * 1000)
+    track_2.append(morning)
+    track_1.append(morning_length)
+    return ([track_1, track_2, track_3])
 
 # Client Setup
 intents = nextcord.Intents.all()
@@ -20,7 +38,7 @@ async def join(ctx):
     channel = ctx.user.voice.channel
     vc = await channel.connect()
     await ctx.send("Tuning in...")
-    # vc.play(nextcord.FFmpegOpusAudio(executable="./env/bin/ffmpeg/ffmpeg.exe", source="assets/soundtrack/ConcernedApe - Stardew Valley OST - 01 Stardew Valley Overture.mp3"))
+    # vc.play(nextcord.FFmpegPCMAudio(executable="????", source="./assets/soundtrack/ConcernedApe - Stardew Valley OST - 01 Stardew Valley Overture.mp3"))
 
 @client.slash_command(guild_ids=[1244302066600640613])
 async def leave(ctx):   
