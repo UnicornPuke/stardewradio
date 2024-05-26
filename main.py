@@ -13,14 +13,14 @@ TOKEN = os.getenv("TOKEN")
 
 # Client Setup
 intents = nextcord.Intents.all()
-client = nextcord.Client(intents=intents)
+client = nextcord.Client(intents=intents, activity=nextcord.Game(name=' Stardew Valley Music'))
 
 @client.slash_command(guild_ids=[1244302066600640613])
 async def join(ctx):
     channel = ctx.user.voice.channel
     vc = await channel.connect()
     await ctx.send("Tuning in...")
-    # vc.play(nextcord.FFmpegPCMAudio(executable="C:/ffmpeg/bin/ffmpeg.exe", source="file.mp3"))
+    # vc.play(nextcord.FFmpegOpusAudio(executable="./env/bin/ffmpeg/ffmpeg.exe", source="assets/soundtrack/ConcernedApe - Stardew Valley OST - 01 Stardew Valley Overture.mp3"))
 
 @client.slash_command(guild_ids=[1244302066600640613])
 async def leave(ctx):   
