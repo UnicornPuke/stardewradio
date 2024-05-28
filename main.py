@@ -71,7 +71,7 @@ def generate_programming(start):
         track_2.append(song_length)
         total_time += song_length
 
-    return ([track_1, track_2, track_3, total_time])
+    return track_1, track_2, track_3, times, total_time
 
 generate_programming(f"./assets/overlays/morning_{random.randint(1, 2)}.wav")
 
