@@ -8,6 +8,7 @@ import nacl
 import ffmpeg
 from mutagen.mp3 import MP3
 from mutagen.wave import WAVE
+import math
 
 # Constants
 load_dotenv("env/.env")
@@ -26,19 +27,20 @@ for i in SONGS:
 SONGNAMES = temp
 
 # Generate Programming
-def generate_programming():
+def generate_programming(start):
     total_time = 0
     track_1 = []
     track_2 = []
     track_3 = []
+    times = []
 
-    morning = nextcord.FFmpegPCMAudio(source = f"./assets/overlays/morning_{random.randint(1, 2)}.wav")
-    morning_length = int(round(WAVE(f"./assets/overlays/morning_{random.randint(1, 2)}.wav").info.length, 3) * 1000)
+    morning = nextcord.FFmpegPCMAudio(source = start)
+    morning_length = int(round(WAVE(start).info.length, 3) * 1000)
     track_2.append(morning)
     track_1.append(morning_length)
     total_time += morning_length
     recent_songs = []
-    while total_time < 46800000:
+    while total_time < 3600000:
         num = random.randint(0,99)
         while num in recent_songs:
             num = random.randint(0,99)
@@ -49,15 +51,29 @@ def generate_programming():
         song_length = int(round(MP3(f"./assets/soundtrack/{SONGS[num]}").info.length, 3) * 1000)
         if song_length <= 60000:
             song_length *= 4
+            track_1.append(song)
+            track_1.append(song)
+            track_1.append(song)
+            track_1.append(song)
+            times.append(total_time)
+            times.append(total_time)
+            times.append(total_time)
+            times.append(total_time)
         elif song_length <= 120000:
             song_length *= 2
-        track_1.append(song)
+            track_1.append(song)
+            track_1.append(song)
+            times.append(total_time)
+            times.append(total_time)
+        else:
+            track_1.append(song)
+            times.append(total_time)
         track_2.append(song_length)
         total_time += song_length
 
     return ([track_1, track_2, track_3, total_time])
 
-generate_programming()
+generate_programming(f"./assets/overlays/morning_{random.randint(1, 2)}.wav")
 
 # Client Setup
 intents = nextcord.Intents.all()
