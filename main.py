@@ -27,20 +27,20 @@ for i in SONGS:
 SONGNAMES = temp
 
 # Generate Programming
-def generate_programming(start):
+def generate_programming():
     total_time = 0
     track_1 = []
     track_2 = []
     track_3 = []
     times = []
 
-    morning = nextcord.FFmpegPCMAudio(source = start)
-    morning_length = int(round(WAVE(start).info.length, 3) * 1000)
+    morning = nextcord.FFmpegPCMAudio(source = f"./assets/overlays/morning_{random.randint(1, 2)}.wav")
+    morning_length = int(round(WAVE(f"./assets/overlays/morning_{random.randint(1, 2)}.wav").info.length, 3) * 1000)
     track_2.append(morning)
     track_1.append(morning_length)
     total_time += morning_length
     recent_songs = []
-    while total_time < 3600000:
+    while total_time < 46800:
         num = random.randint(0,99)
         while num in recent_songs:
             num = random.randint(0,99)
@@ -48,23 +48,15 @@ def generate_programming(start):
         if len(recent_songs) > 10:
             recent_songs.pop(0)
         song = nextcord.FFmpegPCMAudio(source = f"./assets/soundtrack/{SONGS[num]}")
-        song_length = int(round(MP3(f"./assets/soundtrack/{SONGS[num]}").info.length, 3) * 1000)
+        song_length = int(math.round(MP3(f"./assets/soundtrack/{SONGS[num]}").info.length))
         if song_length <= 60000:
             song_length *= 4
-            track_1.append(song)
-            track_1.append(song)
-            track_1.append(song)
-            track_1.append(song)
-            times.append(total_time)
-            times.append(total_time)
-            times.append(total_time)
-            times.append(total_time)
+            track_1.extend([song, song, song, song])
+            times.extend([total_time, total_time, total_time, total_time])
         elif song_length <= 120000:
             song_length *= 2
-            track_1.append(song)
-            track_1.append(song)
-            times.append(total_time)
-            times.append(total_time)
+            track_1.extend([song, song])
+            times.extend([total_time, total_time])
         else:
             track_1.append(song)
             times.append(total_time)
@@ -73,7 +65,7 @@ def generate_programming(start):
 
     return track_1, track_2, track_3, times, total_time
 
-generate_programming(f"./assets/overlays/morning_{random.randint(1, 2)}.wav")
+track_1, track_2, track_3, times, total_time = generate_programming()
 
 # Client Setup
 intents = nextcord.Intents.all()
@@ -94,6 +86,7 @@ async def join(ctx):
     else:
         channel = ctx.user.voice.channel
         vc = await channel.connect()
+        vc.play(nextcord.FFmpegPCMAudio(f'assets/soundtrack/{SONGS[0]}'))
         # if not os.path.exists("out_merger.mp3"):
         #     audio_output = ffmpeg.concat(ffmpeg.input("./assets/overlays/morning_2.wav"), ffmpeg.input("./assets/overlays/morning_1.wav"), v=0, a=1).output('out_merger.mp3')
         #     ffmpeg.run(audio_output)
