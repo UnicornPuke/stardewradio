@@ -4,17 +4,18 @@ from dotenv import load_dotenv
 import asyncio
 import nextcord
 import random
-import nacl
-import ffmpeg
 import datetime
 from datetime import time as checktime
 from nextcord.utils import get
 from mutagen.mp3 import MP3
 from mutagen.wave import WAVE
-import math
 import schedule
 import time
 from pytz import timezone
+import sys
+import ffmpeg
+import nacl
+from stringcolor import *
 tz = timezone('America/New_York')
 
 # Constants
@@ -84,29 +85,44 @@ def generate_programming():
     programs = times
     global total_program
     total_program = total_time
-    print(f"{datetime.datetime.now(tz).replace(microsecond=0)}: Programming generated, going live in {datetime.datetime(int(datetime.datetime.now(tz).year), int(datetime.datetime.now(tz).month), int(datetime.datetime.now(tz).day), 8,0,0,tzinfo=tz) - datetime.datetime.now(tz).replace(microsecond=0)}")
+    print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Programming generated, going live in {datetime.datetime(int(datetime.datetime.now(tz).year), int(datetime.datetime.now(tz).month), int(datetime.datetime.now(tz).day), 8,0,0,tzinfo=tz) - datetime.datetime.now(tz).replace(microsecond=0)}")
     return track_1, track_2, track_3, times, total_time
 
 async def play_song(song_count):
     song_count += 1
     current_song = track1[song_count]
     current_song_length = int(round(MP3(current_song).info.length))
-    await client.change_presence(activity=nextcord.Activity(type=nextcord.ActivityType.playing, name=SONGNAMES[SONGS.index(track1[song_count].replace("./assets/soundtrack/", ""))]))
-    print(f'{datetime.datetime.now(tz).replace(microsecond=0)}: Playing {SONGNAMES[SONGS.index(track1[song_count].replace("./assets/soundtrack/", ""))]} for {datetime.timedelta(seconds=current_song_length)}')
+    await client.change_presence(activity=nextcord.Activity(type=nextcord.ActivityType.playing, name=SONGNAMES[SONGS.index(current_song.replace("./assets/soundtrack/", ""))]))
+    voice_client=[]
+    for guild in client.guilds:
+        if not get(client.voice_clients, guild=guild):
+            continue
+        voice_client.append(get(client.voice_clients, guild=guild))
+
+    for i in voice_client:
+        i.play(nextcord.FFmpegPCMAudio(current_song))
+    print(f'{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ":", "green")} Playing {SONGNAMES[SONGS.index(current_song.replace("./assets/soundtrack/", ""))]} for {datetime.timedelta(seconds=current_song_length)}')
     global timer
     timer = 0
     current_song_length = int(round(MP3(current_song).info.length))
-    while timer > current_song_length:
+    while timer < current_song_length:
         timer += 1
-        time.sleep(1)
+        await asyncio.sleep(1)
 
     return song_count
 
-async def play(track_1, track_2, track_3, times, total_time):
-    song_count = -1
-
+async def loop(track_1, song_count, current_song_length):
     while song_count < len(track_1) - 1:
         song_count = await play_song(song_count)
+
+async def play(track_1, track_2, track_3, times, total_time):
+    song_count = -1
+    current_song_length = int(round(MP3(track_1[song_count]).info.length))
+    task = asyncio.create_task(loop(track_1, song_count, current_song_length))
+    try:
+        await task
+    except asyncio.CancelledError:
+        pass
 
 # Client Setup
 intents = nextcord.Intents.all()
@@ -128,7 +144,7 @@ async def join(ctx):
     else:
         channel = ctx.user.voice.channel
         vc = await channel.connect()
-        vc.play(nextcord.FFmpegPCMAudio(f'assets/soundtrack/{SONGS[0]}'))
+        # vc.play(nextcord.FFmpegPCMAudio(f'assets/soundtrack/{SONGS[0]}'))
         # if not os.path.exists("out_merger.mp3"):
         #     audio_output = ffmpeg.concat(ffmpeg.input("./assets/overlays/morning_2.wav"), ffmpeg.input("./assets/overlays/morning_1.wav"), v=0, a=1).output('out_merger.mp3')
         #     ffmpeg.run(audio_output)
@@ -143,9 +159,14 @@ async def leave(ctx):
     else:
         await ctx.send("There is no channel to tune out.")
 
+async def scheduling():
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
 @client.event
 async def on_ready():
-    print(f"Broadcasting as {client.user.name}")
+    print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Broadcasting as {client.user.name}")
     embed = nextcord.Embed(title=f"{client.user.name} is online", description="", color=0x9966CB)
 
     # Tracks 2 and 3 are obsolete for now.
@@ -156,10 +177,11 @@ async def on_ready():
 
     await play(track1, track2, track3, programs, total_program)
 
-    # This causes an inability to gracefully stop process. DO NOT TURN ON
-    # while True:
-    #     schedule.run_pending()
-    #     time.sleep(1)
+    # task = asyncio.create_task(scheduling())
+    # try:
+    #     await task
+    # except asyncio.CancelledError:
+    #     pass
 
 @client.event
 async def on_close():
@@ -172,7 +194,9 @@ async def on_close():
     for i in voice_client:
         await i.disconnect()
 
-    print(f"Terminating broadcast as {client.user.name}")
+    sys.stdout.write('\033[2K\033[1G')
+
+    print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Terminating broadcast as {client.user.name}")
     embed = nextcord.Embed(title=f"{client.user.name} is offline", description="", color=0x9966CB)
 
 # Client Run
