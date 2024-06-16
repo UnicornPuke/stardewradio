@@ -89,8 +89,13 @@ def generate_programming():
     programs = times
     global total_program
     total_program = total_time
-    print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Programming generated, going live in {datetime.datetime(int(datetime.datetime.now(tz).year), int(datetime.datetime.now(tz).month), int(datetime.datetime.now(tz).day), 8,0,0,tzinfo=tz) - datetime.datetime.now(tz).replace(microsecond=0)}")
+    print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Programming generated, going live in {datetime.datetime(int(datetime.datetime.now(tz).year), int(datetime.datetime.now(tz).month), int(datetime.datetime.now(tz).day), 14,50,0,tzinfo=tz) - datetime.datetime.now(tz).replace(microsecond=0)}")
     return track_1, track_2, track_3, times, total_time
+
+async def timers(current_song_length, timer):
+    while timer < current_song_length:
+        timer += 1
+        await asyncio.sleep(1)
 
 async def play_song(song_count):
     global current_song
@@ -112,9 +117,11 @@ async def play_song(song_count):
     global timer
     timer = 0
     current_song_length = int(round(MP3(current_song).info.length))
-    while timer < current_song_length:
-        timer += 1
-        await asyncio.sleep(1)
+    task = asyncio.create_task(timers(current_song_length, timer))
+    try:
+        await task
+    except asyncio.CancelledError:
+        pass
 
     return song_count
 
@@ -147,6 +154,7 @@ async def joinup(ctx):
     ffmpeg.run(audio_output)
     vc = await channel.connect()
     vc.play(nextcord.FFmpegPCMAudio(f'./assets/trims/out{rand}.mp3'))
+    return f'./assets/trims/out{rand}.mp3'
     # vc.play(nextcord.FFmpegPCMAudio(f'assets/soundtrack/{SONGS[0]}'))
     # if not os.path.exists("out_merger.mp3"):
     #     audio_output = ffmpeg.concat(ffmpeg.input("./assets/overlays/morning_2.wav"), ffmpeg.input("./assets/overlays/morning_1.wav"), v=0, a=1).output('out_merger.mp3')
@@ -164,10 +172,10 @@ async def on_message(ctx):
                 await ctx.channel.send("I am already tuned in.")
             else:
                 await ctx.guild.voice_client.disconnect()
-                await joinup(ctx)
+                out = await joinup(ctx)
                 await ctx.channel.send("Tuning in...")
         else:
-            await joinup(ctx)
+            out = await joinup(ctx)
             await ctx.channel.send("Tuning in...")
     elif ctx.content == "r!leave":
         if ctx.guild.voice_client:
@@ -184,6 +192,7 @@ async def scheduling():
         time.sleep(1)
 
 def cleartrims():
+    print("It has been one minute")
     folder = './assets/trims'
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
@@ -193,7 +202,10 @@ def cleartrims():
             elif os.path.isdir(file_path):
                 shutil.rmtree(file_path)
         except Exception as e:
-            print('Failed to delete %s. Reason: %s' % (file_path, e))
+            print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'red')} Failed to delete {file_path}. Reason: {e}")
+
+def wrapplay():
+    asyncio.run(play(track1, track2, track3, programs, total_program))
 
 @client.event
 async def on_ready():
@@ -201,20 +213,20 @@ async def on_ready():
     embed = nextcord.Embed(title=f"{client.user.name} is online", description="", color=0x9966CB)
 
     # Tracks 2 and 3 are obsolete for now.
-    schedule.every().day.at(str(checktime(7, 50, 00)), 'America/New_York').do(generate_programming)
+    # schedule.every().day.at(str(checktime(7, 50, 00)), 'America/New_York').do(generate_programming)
     track_1, track_2, track_3, times, total_time = generate_programming()
 
-    schedule.every().day.at(str(checktime(8, 00, 00)), 'America/New_York').do(lambda: play(track1, track2, track3, programs, total_program))
+    # schedule.every().day.at(str(checktime(8, 00, 00)), 'America/New_York').do(wrapplay)
 
-    schedule.every().minute.do(cleartrims)
+    schedule.every().hour.do(cleartrims)
 
     await play(track1, track2, track3, programs, total_program)
 
-    # task = asyncio.create_task(scheduling())
-    # try:
-    #     await task
-    # except asyncio.CancelledError:
-    #     pass
+    task = asyncio.create_task(scheduling())
+    try:
+        await task
+    except asyncio.CancelledError:
+        pass
 
 @client.event
 async def on_close():
