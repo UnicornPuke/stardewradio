@@ -33,6 +33,11 @@ for i in SONGS:
     temp.append(curn)
 SONGNAMES = temp
 
+def round_seconds(obj: datetime.datetime) -> datetime.datetime:
+    if obj.microsecond >= 500_000:
+        obj += datetime.timedelta(seconds=1)
+    return obj.replace(microsecond=0)
+
 # Generate Programming
 def generate_programming():
     total_time = 0
@@ -79,7 +84,7 @@ def generate_programming():
     programs = times
     global total_program
     total_program = total_time
-    print(f"Programming generated, going live in {datetime.datetime(int(datetime.datetime.now(tz).year), int(datetime.datetime.now(tz).month), int(datetime.datetime.now(tz).day), 22,15,0,tzinfo=tz) - datetime.datetime.now(tz)}")
+    print(f"Programming generated, going live in {datetime.datetime(int(datetime.datetime.now(tz).year), int(datetime.datetime.now(tz).month), int(datetime.datetime.now(tz).day), 21,28,0,tzinfo=tz) - datetime.datetime.now(tz).replace(microsecond=0)}")
     return track_1, track_2, track_3, times, total_time
 
 # Client Setup
