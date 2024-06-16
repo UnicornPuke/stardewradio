@@ -13,14 +13,14 @@ from mutagen.mp3 import MP3
 from mutagen.wave import WAVE
 import schedule
 import time
-from pytz import timezone
+from datetime import timezone
 import sys
 import ffmpeg
 import nacl
 import random
 from stringcolor import *
-from nextcord.ext import commands
-tz = timezone('America/New_York')
+from nextcord.ext import commands, tasks
+tz = timezone(datetime.timedelta(hours=-4))
 
 # Constants
 load_dotenv("env/.env")
@@ -143,7 +143,7 @@ async def play(track_1, track_2, track_3, times, total_time):
 
 # Client Setup
 intents = nextcord.Intents.all()
-client = nextcord.Client(intents=intents, activity=nextcord.Game(name=' Nothing'))
+client = commands.Bot(command_prefix="r!", intents=intents, activity=nextcord.Game(name=' Nothing'))
 
 async def joinup(ctx):
     rand = random.randint(0, 100000)
@@ -155,36 +155,30 @@ async def joinup(ctx):
     vc = await channel.connect()
     vc.play(nextcord.FFmpegPCMAudio(f'./assets/trims/out{rand}.mp3'))
     return f'./assets/trims/out{rand}.mp3'
-    # vc.play(nextcord.FFmpegPCMAudio(f'assets/soundtrack/{SONGS[0]}'))
-    # if not os.path.exists("out_merger.mp3"):
-    #     audio_output = ffmpeg.concat(ffmpeg.input("./assets/overlays/morning_2.wav"), ffmpeg.input("./assets/overlays/morning_1.wav"), v=0, a=1).output('out_merger.mp3')
-    #     ffmpeg.run(audio_output)
-    # vc.play(nextcord.FFmpegPCMAudio(source = f"out_merger.mp3"))
 
 # Commands
-@client.event
-async def on_message(ctx):
-    if ctx.content == "r!join":
-        if ctx.author.voice == None:
-            await ctx.channel.send("There is no channel to tune into.")
-        elif ctx.guild.voice_client: 
-            if ctx.guild.voice_client.channel == ctx.user.voice.channel:
-                await ctx.channel.send("I am already tuned in.")
-            else:
-                await ctx.guild.voice_client.disconnect()
-                out = await joinup(ctx)
-                await ctx.channel.send("Tuning in...")
+@client.command()
+async def join(ctx):
+    if ctx.author.voice == None:
+        await ctx.channel.send("There is no channel to tune into.")
+    elif ctx.guild.voice_client: 
+        if ctx.guild.voice_client.channel == ctx.user.voice.channel:
+            await ctx.channel.send("I am already tuned in.")
         else:
+            await ctx.guild.voice_client.disconnect()
             out = await joinup(ctx)
             await ctx.channel.send("Tuning in...")
-    elif ctx.content == "r!leave":
-        if ctx.guild.voice_client:
-            await ctx.guild.voice_client.disconnect()
-            await ctx.channel.send("Tuning out...")
-        else:
-            await ctx.channel.send("There is no channel to tune out.")
     else:
-        pass
+        out = await joinup(ctx)
+        await ctx.channel.send("Tuning in...")
+        
+@client.command()
+async def leave(ctx):
+    if ctx.guild.voice_client:
+        await ctx.guild.voice_client.disconnect()
+        await ctx.channel.send("Tuning out...")
+    else:
+        await ctx.channel.send("There is no channel to tune out.")
 
 async def scheduling():
     while True:
@@ -192,7 +186,7 @@ async def scheduling():
         time.sleep(1)
 
 def cleartrims():
-    print("It has been one minute")
+    print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Cleared assets/trims")
     folder = './assets/trims'
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
@@ -212,21 +206,27 @@ async def on_ready():
     print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Broadcasting as {client.user.name}")
     embed = nextcord.Embed(title=f"{client.user.name} is online", description="", color=0x9966CB)
 
-    # Tracks 2 and 3 are obsolete for now.
-    # schedule.every().day.at(str(checktime(7, 50, 00)), 'America/New_York').do(generate_programming)
-    track_1, track_2, track_3, times, total_time = generate_programming()
+class DailyAction(commands.Cog):
+    def __init__(self, bot) -> None:
+        self.bot = client
+        self.generate.start()
+        self.playprogramming.start()
+        self.clear.start()
 
-    # schedule.every().day.at(str(checktime(8, 00, 00)), 'America/New_York').do(wrapplay)
+    @tasks.loop(time=checktime(7, 50, 00, tzinfo=tz))
+    async def generate(self) -> None:
+        generate_programming()
 
-    schedule.every().hour.do(cleartrims)
+    @tasks.loop(time=checktime(8, 00, 00, tzinfo=tz))
+    async def playprogramming(self) -> None:
+        await play(track1, track2, track3, programs, total_program)
 
-    await play(track1, track2, track3, programs, total_program)
+    @tasks.loop(hours=1)
+    async def clear(self) -> None:
+        cleartrims()
 
-    task = asyncio.create_task(scheduling())
-    try:
-        await task
-    except asyncio.CancelledError:
-        pass
+
+client.add_cog(DailyAction(client))
 
 @client.event
 async def on_close():
@@ -241,7 +241,7 @@ async def on_close():
 
     sys.stdout.write('\033[2K\033[1G')
 
-    print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Terminating broadcast as {client.user.name}")
+    print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'red')} Terminating broadcast as {client.user.name}")
     embed = nextcord.Embed(title=f"{client.user.name} is offline", description="", color=0x9966CB)
 
 # Client Run
