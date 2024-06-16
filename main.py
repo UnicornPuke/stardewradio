@@ -6,6 +6,7 @@ import nextcord
 import random
 import nacl
 import ffmpeg
+import datetime
 from datetime import time as checktime
 from nextcord.utils import get
 from mutagen.mp3 import MP3
@@ -13,6 +14,8 @@ from mutagen.wave import WAVE
 import math
 import schedule
 import time
+from pytz import timezone
+tz = timezone('EST')
 
 # Constants
 load_dotenv("env/.env")
@@ -76,6 +79,7 @@ def generate_programming():
     programs = times
     global total_program
     total_program = total_time
+    print(f"Programming generated, going live in {datetime.datetime(int(datetime.datetime.now(tz).year), int(datetime.datetime.now(tz).month), int(datetime.datetime.now(tz).day), 22,15,0,tzinfo=tz) - datetime.datetime.now(tz)}")
     return track_1, track_2, track_3, times, total_time
 
 # Client Setup
@@ -117,8 +121,8 @@ def func():
     print("it is 2128")
 
 # Tracks 2 and 3 are obsolete for now.
-schedule.every().day.at(checktime(7,50,0), "America/New_York").do(generate_programming)
-# track_1, track_2, track_3, times, total_time = generate_programming()
+schedule.every().day.at("07:50:00", "America/New_York").do(generate_programming)
+track_1, track_2, track_3, times, total_time = generate_programming()
 
 @client.event
 async def on_ready():
