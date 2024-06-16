@@ -5,6 +5,8 @@ import asyncio
 import nextcord
 import random
 import datetime
+import os
+import shutil
 from datetime import time as checktime
 from nextcord.utils import get
 from mutagen.mp3 import MP3
@@ -15,7 +17,9 @@ from pytz import timezone
 import sys
 import ffmpeg
 import nacl
+import random
 from stringcolor import *
+from nextcord.ext import commands
 tz = timezone('America/New_York')
 
 # Constants
@@ -89,6 +93,8 @@ def generate_programming():
     return track_1, track_2, track_3, times, total_time
 
 async def play_song(song_count):
+    global current_song
+    global timer
     song_count += 1
     current_song = track1[song_count]
     current_song_length = int(round(MP3(current_song).info.length))
@@ -100,6 +106,7 @@ async def play_song(song_count):
         voice_client.append(get(client.voice_clients, guild=guild))
 
     for i in voice_client:
+        i.stop()
         i.play(nextcord.FFmpegPCMAudio(current_song))
     print(f'{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ":", "green")} Playing {SONGNAMES[SONGS.index(current_song.replace("./assets/soundtrack/", ""))]} for {datetime.timedelta(seconds=current_song_length)}')
     global timer
@@ -118,51 +125,75 @@ async def loop(track_1, song_count, current_song_length):
 async def play(track_1, track_2, track_3, times, total_time):
     song_count = -1
     current_song_length = int(round(MP3(track_1[song_count]).info.length))
+    print(f'{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ":", "green")} Starting daily broadcast')
     task = asyncio.create_task(loop(track_1, song_count, current_song_length))
     try:
         await task
     except asyncio.CancelledError:
         pass
+    sys.stdout.write('\033[2K\033[1G')
+    print(f'{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ":", "green")} Terminating daily broadcast')
 
 # Client Setup
 intents = nextcord.Intents.all()
 client = nextcord.Client(intents=intents, activity=nextcord.Game(name=' Nothing'))
 
-# Commands
-@client.slash_command(guild_ids=[1244302066600640613])
-async def join(ctx):
-    if ctx.user.voice == None:
-        await ctx.send("There is no channel to tune into.")
-    elif ctx.guild.voice_client: 
-        if ctx.guild.voice_client.channel == ctx.user.voice.channel:
-            await ctx.send("I am already tuned in.")
-        else:
-            await ctx.guild.voice_client.disconnect()
-            channel = ctx.user.voice.channel
-            vc = await channel.connect()
-            await ctx.send("Tuning in...")
-    else:
-        channel = ctx.user.voice.channel
-        vc = await channel.connect()
-        # vc.play(nextcord.FFmpegPCMAudio(f'assets/soundtrack/{SONGS[0]}'))
-        # if not os.path.exists("out_merger.mp3"):
-        #     audio_output = ffmpeg.concat(ffmpeg.input("./assets/overlays/morning_2.wav"), ffmpeg.input("./assets/overlays/morning_1.wav"), v=0, a=1).output('out_merger.mp3')
-        #     ffmpeg.run(audio_output)
-        # vc.play(nextcord.FFmpegPCMAudio(source = f"out_merger.mp3"))
-        await ctx.send("Tuning in...")
+async def joinup(ctx):
+    rand = random.randint(0, 100000)
+    channel = ctx.author.voice.channel
+    audio_input = ffmpeg.input(current_song)
+    audio_cut = audio_input.audio.filter('atrim', start=timer)
+    audio_output = ffmpeg.output(audio_cut, f'./assets/trims/out{rand}.mp3', loglevel="quiet")
+    ffmpeg.run(audio_output)
+    vc = await channel.connect()
+    vc.play(nextcord.FFmpegPCMAudio(f'./assets/trims/out{rand}.mp3'))
+    # vc.play(nextcord.FFmpegPCMAudio(f'assets/soundtrack/{SONGS[0]}'))
+    # if not os.path.exists("out_merger.mp3"):
+    #     audio_output = ffmpeg.concat(ffmpeg.input("./assets/overlays/morning_2.wav"), ffmpeg.input("./assets/overlays/morning_1.wav"), v=0, a=1).output('out_merger.mp3')
+    #     ffmpeg.run(audio_output)
+    # vc.play(nextcord.FFmpegPCMAudio(source = f"out_merger.mp3"))
 
-@client.slash_command(guild_ids=[1244302066600640613])
-async def leave(ctx):   
-    if ctx.guild.voice_client:
-        await ctx.guild.voice_client.disconnect()
-        await ctx.send("Tuning out...")
+# Commands
+@client.event
+async def on_message(ctx):
+    if ctx.content == "r!join":
+        if ctx.author.voice == None:
+            await ctx.channel.send("There is no channel to tune into.")
+        elif ctx.guild.voice_client: 
+            if ctx.guild.voice_client.channel == ctx.user.voice.channel:
+                await ctx.channel.send("I am already tuned in.")
+            else:
+                await ctx.guild.voice_client.disconnect()
+                await joinup(ctx)
+                await ctx.channel.send("Tuning in...")
+        else:
+            await joinup(ctx)
+            await ctx.channel.send("Tuning in...")
+    elif ctx.content == "r!leave":
+        if ctx.guild.voice_client:
+            await ctx.guild.voice_client.disconnect()
+            await ctx.channel.send("Tuning out...")
+        else:
+            await ctx.channel.send("There is no channel to tune out.")
     else:
-        await ctx.send("There is no channel to tune out.")
+        pass
 
 async def scheduling():
     while True:
         schedule.run_pending()
         time.sleep(1)
+
+def cleartrims():
+    folder = './assets/trims'
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 @client.event
 async def on_ready():
@@ -174,6 +205,8 @@ async def on_ready():
     track_1, track_2, track_3, times, total_time = generate_programming()
 
     schedule.every().day.at(str(checktime(8, 00, 00)), 'America/New_York').do(lambda: play(track1, track2, track3, programs, total_program))
+
+    schedule.every().minute.do(cleartrims)
 
     await play(track1, track2, track3, programs, total_program)
 
