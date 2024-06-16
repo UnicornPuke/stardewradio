@@ -6,9 +6,13 @@ import nextcord
 import random
 import nacl
 import ffmpeg
+from datetime import time as checktime
+from nextcord.utils import get
 from mutagen.mp3 import MP3
 from mutagen.wave import WAVE
 import math
+import schedule
+import time
 
 # Constants
 load_dotenv("env/.env")
@@ -34,11 +38,11 @@ def generate_programming():
     track_3 = []
     times = []
 
-    morning = nextcord.FFmpegPCMAudio(source = f"./assets/overlays/morning_{random.randint(1, 2)}.wav")
-    morning_length = int(round(WAVE(f"./assets/overlays/morning_{random.randint(1, 2)}.wav").info.length, 3) * 1000)
-    track_2.append(morning)
-    track_1.append(morning_length)
-    total_time += morning_length
+    # morning = nextcord.FFmpegPCMAudio(source = f"./assets/overlays/morning_{random.randint(1, 2)}.wav")
+    # morning_length = int(round(WAVE(f"./assets/overlays/morning_{random.randint(1, 2)}.wav").info.length, 3) * 1000)
+    # track_2.append(morning)
+    # track_1.append(morning_length)
+    # total_time += morning_length
     recent_songs = []
     while total_time < 46800:
         num = random.randint(0,99)
@@ -48,7 +52,7 @@ def generate_programming():
         if len(recent_songs) > 10:
             recent_songs.pop(0)
         song = nextcord.FFmpegPCMAudio(source = f"./assets/soundtrack/{SONGS[num]}")
-        song_length = int(math.round(MP3(f"./assets/soundtrack/{SONGS[num]}").info.length))
+        song_length = int(round(MP3(f"./assets/soundtrack/{SONGS[num]}").info.length))
         if song_length <= 60000:
             song_length *= 4
             track_1.extend([song, song, song, song])
@@ -62,15 +66,23 @@ def generate_programming():
             times.append(total_time)
         track_2.append(song_length)
         total_time += song_length
-
+    global track1 
+    track1 = track_1
+    global track2
+    track2 = track_2
+    global track3 
+    track3 = track_3
+    global programs
+    programs = times
+    global total_program
+    total_program = total_time
     return track_1, track_2, track_3, times, total_time
-
-track_1, track_2, track_3, times, total_time = generate_programming()
 
 # Client Setup
 intents = nextcord.Intents.all()
 client = nextcord.Client(intents=intents, activity=nextcord.Game(name=' Nothing'))
 
+# Commands
 @client.slash_command(guild_ids=[1244302066600640613])
 async def join(ctx):
     if ctx.user.voice == None:
@@ -101,14 +113,34 @@ async def leave(ctx):
     else:
         await ctx.send("There is no channel to tune out.")
 
+def func():
+    print("it is 2128")
+
+# Tracks 2 and 3 are obsolete for now.
+schedule.every().day.at(checktime(7,50,0), "America/New_York").do(generate_programming)
+# track_1, track_2, track_3, times, total_time = generate_programming()
 
 @client.event
 async def on_ready():
     print(f"Broadcasting as {client.user.name}")
     embed = nextcord.Embed(title=f"{client.user.name} is online", description="", color=0x9966CB)
 
+    # This causes an inability to gracefully stop process. DO NOT TURN ON
+    # while True:
+    #     schedule.run_pending()
+    #     time.sleep(1)
+
 @client.event
 async def on_close():
+    voice_client=[]
+    for guild in client.guilds:
+        if not get(client.voice_clients, guild=guild):
+            continue
+        voice_client.append(get(client.voice_clients, guild=guild))
+
+    for i in voice_client:
+        await i.disconnect()
+
     print(f"Terminating broadcast as {client.user.name}")
     embed = nextcord.Embed(title=f"{client.user.name} is offline", description="", color=0x9966CB)
 
