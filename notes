@@ -1,3 +1,4 @@
 TODO:
-- Account for daylight savings
-- Stop broken pipe error
+- Quiet FFMPeg errors
+- Make time actually pass
+- Make it package the audio files and play them

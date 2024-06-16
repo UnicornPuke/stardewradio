@@ -15,7 +15,7 @@ import math
 import schedule
 import time
 from pytz import timezone
-tz = timezone('EST')
+tz = timezone('America/New_York')
 
 # Constants
 load_dotenv("env/.env")
@@ -59,13 +59,13 @@ def generate_programming():
         recent_songs.append(num)
         if len(recent_songs) > 10:
             recent_songs.pop(0)
-        song = nextcord.FFmpegPCMAudio(source = f"./assets/soundtrack/{SONGS[num]}")
+        song = f"./assets/soundtrack/{SONGS[num]}"
         song_length = int(round(MP3(f"./assets/soundtrack/{SONGS[num]}").info.length))
-        if song_length <= 60000:
+        if song_length <= 60:
             song_length *= 4
             track_1.extend([song, song, song, song])
             times.extend([total_time, total_time, total_time, total_time])
-        elif song_length <= 120000:
+        elif song_length <= 100:
             song_length *= 2
             track_1.extend([song, song])
             times.extend([total_time, total_time])
@@ -84,8 +84,29 @@ def generate_programming():
     programs = times
     global total_program
     total_program = total_time
-    print(f"Programming generated, going live in {datetime.datetime(int(datetime.datetime.now(tz).year), int(datetime.datetime.now(tz).month), int(datetime.datetime.now(tz).day), 21,28,0,tzinfo=tz) - datetime.datetime.now(tz).replace(microsecond=0)}")
+    print(f"{datetime.datetime.now(tz).replace(microsecond=0)}: Programming generated, going live in {datetime.datetime(int(datetime.datetime.now(tz).year), int(datetime.datetime.now(tz).month), int(datetime.datetime.now(tz).day), 8,0,0,tzinfo=tz) - datetime.datetime.now(tz).replace(microsecond=0)}")
     return track_1, track_2, track_3, times, total_time
+
+async def play_song(song_count):
+    song_count += 1
+    current_song = track1[song_count]
+    current_song_length = int(round(MP3(current_song).info.length))
+    await client.change_presence(activity=nextcord.Activity(type=nextcord.ActivityType.playing, name=SONGNAMES[SONGS.index(track1[song_count].replace("./assets/soundtrack/", ""))]))
+    print(f'{datetime.datetime.now(tz).replace(microsecond=0)}: Playing {SONGNAMES[SONGS.index(track1[song_count].replace("./assets/soundtrack/", ""))]} for {datetime.timedelta(seconds=current_song_length)}')
+    global timer
+    timer = 0
+    current_song_length = int(round(MP3(current_song).info.length))
+    while timer > current_song_length:
+        timer += 1
+        time.sleep(1)
+
+    return song_count
+
+async def play(track_1, track_2, track_3, times, total_time):
+    song_count = -1
+
+    while song_count < len(track_1) - 1:
+        song_count = await play_song(song_count)
 
 # Client Setup
 intents = nextcord.Intents.all()
@@ -122,17 +143,18 @@ async def leave(ctx):
     else:
         await ctx.send("There is no channel to tune out.")
 
-def func():
-    print("it is 2128")
-
-# Tracks 2 and 3 are obsolete for now.
-schedule.every().day.at("07:50:00", "America/New_York").do(generate_programming)
-track_1, track_2, track_3, times, total_time = generate_programming()
-
 @client.event
 async def on_ready():
     print(f"Broadcasting as {client.user.name}")
     embed = nextcord.Embed(title=f"{client.user.name} is online", description="", color=0x9966CB)
+
+    # Tracks 2 and 3 are obsolete for now.
+    schedule.every().day.at(str(checktime(7, 50, 00)), 'America/New_York').do(generate_programming)
+    track_1, track_2, track_3, times, total_time = generate_programming()
+
+    schedule.every().day.at(str(checktime(8, 00, 00)), 'America/New_York').do(lambda: play(track1, track2, track3, programs, total_program))
+
+    await play(track1, track2, track3, programs, total_program)
 
     # This causes an inability to gracefully stop process. DO NOT TURN ON
     # while True:
