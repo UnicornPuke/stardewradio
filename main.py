@@ -115,7 +115,7 @@ def cleartrims():
 async def on_ready():
     print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Broadcasting as {client.user.name}")
     client.add_cog(DailyAction(client))
-    client.add_cog(Radio_Control(client))
+    client.add_cog(RadioControl(client))
     client.add_cog(Setup(client))
     global current_song
     current_song = ""
