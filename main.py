@@ -43,55 +43,6 @@ def round_seconds(obj: datetime.datetime) -> datetime.datetime:
         obj += datetime.timedelta(seconds=1)
     return obj.replace(microsecond=0)
 
-# Generate Programming
-def generate_programming():
-    total_time = 0
-    track_1 = []
-    track_2 = []
-    track_3 = []
-    times = []
-
-    # morning = nextcord.FFmpegPCMAudio(source = f"./assets/overlays/morning_{random.randint(1, 2)}.wav")
-    # morning_length = int(round(WAVE(f"./assets/overlays/morning_{random.randint(1, 2)}.wav").info.length, 3) * 1000)
-    # track_2.append(morning)
-    # track_1.append(morning_length)
-    # total_time += morning_length
-    recent_songs = []
-    while total_time < 46800:
-        num = random.randint(0,99)
-        while num in recent_songs:
-            num = random.randint(0,99)
-        recent_songs.append(num)
-        if len(recent_songs) > 10:
-            recent_songs.pop(0)
-        song = f"./assets/soundtrack/{SONGS[num]}"
-        song_length = int(round(MP3(f"./assets/soundtrack/{SONGS[num]}").info.length))
-        if song_length <= 60:
-            song_length *= 4
-            track_1.extend([song, song, song, song])
-            times.extend([total_time, total_time, total_time, total_time])
-        elif song_length <= 100:
-            song_length *= 2
-            track_1.extend([song, song])
-            times.extend([total_time, total_time])
-        else:
-            track_1.append(song)
-            times.append(total_time)
-        track_2.append(song_length)
-        total_time += song_length
-    global track1 
-    track1 = track_1
-    global track2
-    track2 = track_2
-    global track3 
-    track3 = track_3
-    global programs
-    programs = times
-    global total_program
-    total_program = total_time
-    print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Programming generated, going live in {datetime.datetime(int(datetime.datetime.now(tz).year), int(datetime.datetime.now(tz).month), int(datetime.datetime.now(tz).day), 14,50,0,tzinfo=tz) - datetime.datetime.now(tz).replace(microsecond=0)}")
-    return track_1, track_2, track_3, times, total_time
-
 async def timers(current_song_length, timer):
     while timer < current_song_length:
         timer += 1
@@ -125,36 +76,26 @@ async def play_song(song_count):
 
     return song_count
 
-async def loop(track_1, song_count, current_song_length):
-    while song_count < len(track_1) - 1:
+async def loop(track_1, song_count, current_song):
+    while song_count < len(track_1) - 1 and datetime.datetime.now(tz).hour < 21:
         song_count = await play_song(song_count)
-
-async def play(track_1, track_2, track_3, times, total_time):
-    song_count = -1
-    current_song_length = int(round(MP3(track_1[song_count]).info.length))
-    print(f'{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ":", "green")} Starting daily broadcast')
-    task = asyncio.create_task(loop(track_1, song_count, current_song_length))
-    try:
-        await task
-    except asyncio.CancelledError:
-        pass
-    sys.stdout.write('\033[2K\033[1G')
-    print(f'{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ":", "green")} Terminating daily broadcast')
 
 # Client Setup
 intents = nextcord.Intents.all()
 client = commands.Bot(command_prefix="r!", intents=intents, activity=nextcord.Game(name=' Nothing'))
 
 async def joinup(ctx):
-    rand = random.randint(0, 100000)
     channel = ctx.author.voice.channel
-    audio_input = ffmpeg.input(current_song)
-    audio_cut = audio_input.audio.filter('atrim', start=timer)
-    audio_output = ffmpeg.output(audio_cut, f'./assets/trims/out{rand}.mp3', loglevel="quiet")
-    ffmpeg.run(audio_output)
     vc = await channel.connect()
-    vc.play(nextcord.FFmpegPCMAudio(f'./assets/trims/out{rand}.mp3'))
-    return f'./assets/trims/out{rand}.mp3'
+    if current_song != "":
+        rand = random.randint(0, 100000)
+        audio_input = ffmpeg.input(current_song)
+        audio_cut = audio_input.audio.filter('atrim', start=timer)
+        audio_output = ffmpeg.output(audio_cut, f'./assets/trims/out{rand}.mp3', loglevel="quiet")
+        ffmpeg.run(audio_output)
+        vc.play(nextcord.FFmpegPCMAudio(f'./assets/trims/out{rand}.mp3'))
+        return f'./assets/trims/out{rand}.mp3'
+    return None
 
 # Commands
 @client.command()
@@ -163,30 +104,38 @@ async def join(ctx):
         await ctx.channel.send("There is no channel to tune into.")
     elif ctx.guild.voice_client: 
         if ctx.guild.voice_client.channel == ctx.user.voice.channel:
-            await ctx.channel.send("I am already tuned in.")
+            await ctx.channel.send("I am already in.")
         else:
             await ctx.guild.voice_client.disconnect()
             out = await joinup(ctx)
-            await ctx.channel.send("Tuning in...")
+            await ctx.channel.send("Joining...")
     else:
         out = await joinup(ctx)
-        await ctx.channel.send("Tuning in...")
+        await ctx.channel.send("Joining...")
         
 @client.command()
 async def leave(ctx):
     if ctx.guild.voice_client:
         await ctx.guild.voice_client.disconnect()
-        await ctx.channel.send("Tuning out...")
+        await ctx.channel.send("Leaving...")
     else:
-        await ctx.channel.send("There is no channel to tune out.")
+        await ctx.channel.send("There is no channel to tune out of.")
 
-async def scheduling():
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+# @client.command()
+# async def volume(ctx, new_volume):
+#     if 0 <= int(new_volume) <= 100:
+#         new_volume = new_volume / 100
+#         if not ctx.guild.voice_client:
+#             await ctx.channel.send('There is no channel connected')
+#         elif not ctx.guild.voice_client.source:
+#             await ctx.channel.send('There is no song playing.')
+#         else:
+#             ctx.guild.voice_client.source.volume = new_volume
+#     else:
+#         await ctx.channel.send('Please enter a volume between 0 and 100')
 
 def cleartrims():
-    print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Cleared assets/trims")
+    print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Cleared ./assets/trims contents")
     folder = './assets/trims'
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
@@ -198,35 +147,103 @@ def cleartrims():
         except Exception as e:
             print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'red')} Failed to delete {file_path}. Reason: {e}")
 
-def wrapplay():
-    asyncio.run(play(track1, track2, track3, programs, total_program))
-
 @client.event
 async def on_ready():
     print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Broadcasting as {client.user.name}")
-    embed = nextcord.Embed(title=f"{client.user.name} is online", description="", color=0x9966CB)
+    client.add_cog(DailyAction(client))
+    global current_song
+    current_song = ""
 
 class DailyAction(commands.Cog):
-    def __init__(self, bot) -> None:
-        self.bot = client
-        self.generate.start()
-        self.playprogramming.start()
+    def __init__(self, bot):
+        self.bot = bot
+        self.generate_programming.start()
+        self.play.start()
         self.clear.start()
+        self.stop.start()
 
     @tasks.loop(time=checktime(7, 50, 00, tzinfo=tz))
-    async def generate(self) -> None:
-        generate_programming()
+    async def generate_programming(self):
+        total_time = 0
+        track_1 = []
+        track_2 = []
+        track_3 = []
+        times = []
 
-    @tasks.loop(time=checktime(8, 00, 00, tzinfo=tz))
-    async def playprogramming(self) -> None:
-        await play(track1, track2, track3, programs, total_program)
+        # morning = nextcord.FFmpegPCMAudio(source = f"./assets/overlays/morning_{random.randint(1, 2)}.wav")
+        # morning_length = int(round(WAVE(f"./assets/overlays/morning_{random.randint(1, 2)}.wav").info.length, 3) * 1000)
+        # track_2.append(morning)
+        # track_1.append(morning_length)
+        # total_time += morning_length
+        recent_songs = []
+        while total_time < 46800:
+            num = random.randint(0,99)
+            while num in recent_songs:
+                num = random.randint(0,99)
+            recent_songs.append(num)
+            if len(recent_songs) > 10:
+                recent_songs.pop(0)
+            song = f"./assets/soundtrack/{SONGS[num]}"
+            song_length = int(round(MP3(f"./assets/soundtrack/{SONGS[num]}").info.length))
+            if song_length <= 60:
+                song_length *= 4
+                track_1.extend([song, song, song, song])
+                times.extend([total_time, total_time, total_time, total_time])
+            elif song_length <= 100:
+                song_length *= 2
+                track_1.extend([song, song])
+                times.extend([total_time, total_time])
+            else:
+                track_1.append(song)
+                times.append(total_time)
+            track_2.append(song_length)
+            total_time += song_length
+        global track1 
+        track1 = track_1
+        global track2
+        track2 = track_2
+        global track3 
+        track3 = track_3
+        global programs
+        programs = times
+        global total_program
+        total_program = total_time
+        print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Programming generated, going live in {datetime.datetime(int(datetime.datetime.now(tz).year), int(datetime.datetime.now(tz).month), int(datetime.datetime.now(tz).day), 8,00,0,tzinfo=tz) - datetime.datetime.now(tz).replace(microsecond=0)}")
+        return track_1, track_2, track_3, times, total_time
 
-    @tasks.loop(hours=1)
-    async def clear(self) -> None:
+    @tasks.loop(time=checktime(8, 00, 0, tzinfo=tz))
+    async def play(self):
+        global current_song
+        song_count = -1
+        current_song_length = int(round(MP3(track1[song_count]).info.length))
+        print(f'{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ":", "green")} Starting daily broadcast')
+        task = asyncio.create_task(loop(track1, song_count, current_song_length))
+        self.loop = task
+        try:
+            await task
+        except asyncio.CancelledError:
+            task.cancel()
+        current_song = ""
+
+    @tasks.loop(time=checktime(21, 00, 0, tzinfo=tz))
+    async def stop(self):
+        self.loop.cancel()
+        voice_client=[]
+        for guild in client.guilds:
+            if not get(client.voice_clients, guild=guild):
+                continue
+            voice_client.append(get(client.voice_clients, guild=guild))
+
+        for i in voice_client:
+            i.stop()
+        sys.stdout.write('\033[2K\033[1G')
+        print(f'{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ":", "green")} Terminating daily broadcast')
+        await client.change_presence(activity=nextcord.Activity(type=nextcord.ActivityType.playing, name="Nothing"))
+        current_song = ""
+
+    @tasks.loop(minutes=10)
+    async def clear(self):
         cleartrims()
-
-
-client.add_cog(DailyAction(client))
 
 @client.event
 async def on_close():
@@ -242,6 +259,8 @@ async def on_close():
     sys.stdout.write('\033[2K\033[1G')
 
     print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'red')} Terminating broadcast as {client.user.name}")
+    # print(tasks)
+    # sys.exit()
     embed = nextcord.Embed(title=f"{client.user.name} is offline", description="", color=0x9966CB)
 
 # Client Run
