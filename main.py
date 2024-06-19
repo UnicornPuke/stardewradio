@@ -20,7 +20,10 @@ import nacl
 import random
 from stringcolor import *
 from nextcord.ext import commands, tasks
-tz = timezone(datetime.timedelta(hours=-4))
+import pytz
+tzpy = pytz.timezone('US/Eastern')
+global tz
+tz = timezone(datetime.timedelta(hours=-5) + datetime.datetime.now(tzpy).dst())
 
 # Constants
 load_dotenv("env/.env")
@@ -240,8 +243,9 @@ class DailyAction(commands.Cog):
         print(f'{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ":", "green")} Terminating daily broadcast')
         await client.change_presence(activity=nextcord.Activity(type=nextcord.ActivityType.playing, name="Nothing"))
         current_song = ""
+        tz = timezone(datetime.timedelta(hours=-5) + datetime.datetime.now(tzpy).dst())
 
-    @tasks.loop(minutes=10)
+    @tasks.loop(minutes=30)
     async def clear(self):
         cleartrims()
 
