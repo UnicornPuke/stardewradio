@@ -11,12 +11,10 @@ from datetime import time as checktime
 from nextcord.utils import get
 from mutagen.mp3 import MP3
 from mutagen.wave import WAVE
-import schedule
 import time
 from datetime import timezone
 import sys
 import ffmpeg
-import nacl
 import random
 from stringcolor import *
 from nextcord.ext import commands, tasks
@@ -100,43 +98,6 @@ async def joinup(ctx):
         return f'./assets/trims/out{rand}.mp3'
     return None
 
-# Commands
-@client.command()
-async def join(ctx):
-    if ctx.author.voice == None:
-        await ctx.channel.send("There is no channel to tune into.")
-    elif ctx.guild.voice_client: 
-        if ctx.guild.voice_client.channel == ctx.user.voice.channel:
-            await ctx.channel.send("I am already in.")
-        else:
-            await ctx.guild.voice_client.disconnect()
-            out = await joinup(ctx)
-            await ctx.channel.send("Joining...")
-    else:
-        out = await joinup(ctx)
-        await ctx.channel.send("Joining...")
-        
-@client.command()
-async def leave(ctx):
-    if ctx.guild.voice_client:
-        await ctx.guild.voice_client.disconnect()
-        await ctx.channel.send("Leaving...")
-    else:
-        await ctx.channel.send("There is no channel to tune out of.")
-
-# @client.command()
-# async def volume(ctx, new_volume):
-#     if 0 <= int(new_volume) <= 100:
-#         new_volume = new_volume / 100
-#         if not ctx.guild.voice_client:
-#             await ctx.channel.send('There is no channel connected')
-#         elif not ctx.guild.voice_client.source:
-#             await ctx.channel.send('There is no song playing.')
-#         else:
-#             ctx.guild.voice_client.source.volume = new_volume
-#     else:
-#         await ctx.channel.send('Please enter a volume between 0 and 100')
-
 def cleartrims():
     print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Cleared ./assets/trims contents")
     folder = './assets/trims'
@@ -154,6 +115,8 @@ def cleartrims():
 async def on_ready():
     print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Broadcasting as {client.user.name}")
     client.add_cog(DailyAction(client))
+    client.add_cog(Radio_Control(client))
+    client.add_cog(Setup(client))
     global current_song
     current_song = ""
 
@@ -248,6 +211,70 @@ class DailyAction(commands.Cog):
     @tasks.loop(minutes=30)
     async def clear(self):
         cleartrims()
+
+class RadioControl(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+        self.description = "Manipulates the settings on the radio."
+
+    @commands.command(aliases=["changevolume"], description="Changes the volume of the radio.", help = "Changes the volume of the radio.")
+    async def volume(self,ctx, new_volume=None):
+        if new_volume == None:
+            await ctx.channel.send('Please enter a whole number.')
+            return
+        try:
+            int(new_volume)
+        except:
+            await ctx.channel.send('Please enter a whole number.')
+            return
+        if 0 <= int(new_volume) <= 100:
+            new_volume = int(new_volume) / 100
+            if not ctx.guild.voice_client:
+                await ctx.channel.send('There is no channel connected.')
+            elif not ctx.guild.voice_client.source:
+                await ctx.channel.send('There is no song playing.')
+            else:
+                ctx.guild.voice_client.source.volume = new_volume
+                await ctx.channel.send(f'Set the volume to {new_volume}.')
+        else:
+            await ctx.channel.send('Please enter a number between 0 and 100.')
+
+    @commands.command(description="Sets the radio volume to zero.", help = "Sets the radio volume to zero.")
+    async def mute(self,ctx):
+        if not ctx.guild.voice_client:
+            await ctx.channel.send('There is no channel connected.')
+        elif not ctx.guild.voice_client.source:
+            await ctx.channel.send('There is no song playing.')
+        else:
+            ctx.guild.voice_client.source.volume = 0
+
+class Setup(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+        self.description = "Sets up the radio."
+
+    @commands.command(aliases=["tunein", "connect"], description="Connects the bot to a voice channel", help = "Connects the bot to a voice channel")
+    async def join(self, ctx):
+        if ctx.author.voice == None:
+            await ctx.channel.send("There is no channel to tune into.")
+        elif ctx.guild.voice_client: 
+            if ctx.guild.voice_client.channel == ctx.user.voice.channel:
+                await ctx.channel.send("I am already in.")
+            else:
+                await ctx.guild.voice_client.disconnect()
+                out = await joinup(ctx)
+                await ctx.channel.send("Joining...")
+        else:
+            out = await joinup(ctx)
+            await ctx.channel.send("Joining...")
+            
+    @commands.command(aliases=["tuneout", "disconnect"], description="Disconnects the bot from a voice channel.", help = "Disconnects the bot from a voice channel")
+    async def leave(self, ctx):
+        if ctx.guild.voice_client:
+            await ctx.guild.voice_client.disconnect()
+            await ctx.channel.send("Leaving...")
+        else:
+            await ctx.channel.send("There is no channel to tune out of.")
 
 @client.event
 async def on_close():
