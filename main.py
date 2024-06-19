@@ -18,6 +18,8 @@ import ffmpeg
 import random
 from stringcolor import *
 from nextcord.ext import commands, tasks
+from nextcord import ui
+import data
 import pytz
 tzpy = pytz.timezone('US/Eastern')
 global tz
@@ -98,6 +100,19 @@ async def joinup(ctx):
         return f'./assets/trims/out{rand}.mp3'
     return None
 
+async def slashjoinup(ctx):
+    channel = ctx.user.voice.channel
+    vc = await channel.connect()
+    if current_song != "":
+        rand = random.randint(0, 100000)
+        audio_input = ffmpeg.input(current_song)
+        audio_cut = audio_input.audio.filter('atrim', start=timer)
+        audio_output = ffmpeg.output(audio_cut, f'./assets/trims/out{rand}.mp3', loglevel="quiet")
+        ffmpeg.run(audio_output)
+        vc.play(nextcord.FFmpegPCMAudio(f'./assets/trims/out{rand}.mp3'))
+        return f'./assets/trims/out{rand}.mp3'
+    return None
+
 def cleartrims():
     print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Cleared ./assets/trims contents")
     folder = './assets/trims'
@@ -117,6 +132,7 @@ async def on_ready():
     client.add_cog(DailyAction(client))
     client.add_cog(RadioControl(client))
     client.add_cog(Setup(client))
+    client.add_cog(Tips(client))
     global current_song
     current_song = ""
 
@@ -276,6 +292,18 @@ class Setup(commands.Cog):
         else:
             await ctx.channel.send("There is no channel to tune out of.")
 
+class Tips(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+        self.description = "Sets up the radio."
+
+    @commands.command(aliases=["gift"], description="Shows you a character's gift chart.", help = "Shows you a character's gift chart.")
+    async def gifts(self, ctx):
+        view = ui.View()
+        view.add_item(data.Characters())
+
+        await ctx.send("Choose a character.", view=view)
+        
 @client.event
 async def on_close():
     voice_client=[]
