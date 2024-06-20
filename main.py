@@ -279,7 +279,7 @@ async def gifts(ctx: nextcord.Interaction, character: str = nextcord.SlashOption
     view = ui.View()
     view.add_item(data.Like(character))
 
-    await ctx.send(f"```Choose fields for {character}. You have 10 seconds.```", view=view, delete_after=10, ephemeral=True)
+    await ctx.send(f"```Choose fields for {character}. You have 15 seconds.```", view=view, delete_after=15, ephemeral=True)
 
 @client.slash_command(description="Shows this message.", guild_ids=[1244302066600640613])
 async def help(ctx, command: str = nextcord.SlashOption(name="command", description="The bot's commands or categories", choices=["Home", "Radio Control", "Setup", "Tips", "mute", "volume", "join", "leave", "gifts", "help"])):
