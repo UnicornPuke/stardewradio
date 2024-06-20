@@ -10,8 +10,7 @@ import shutil
 from datetime import time as checktime
 from nextcord.utils import get
 from mutagen.mp3 import MP3
-from mutagen.wave import WAVE
-import time
+# from mutagen.wave import WAVE
 from datetime import timezone
 import sys
 import ffmpeg
@@ -24,6 +23,19 @@ import pytz
 tzpy = pytz.timezone('US/Eastern')
 global tz
 tz = timezone(datetime.timedelta(hours=-5) + datetime.datetime.now(tzpy).dst())
+
+# Client Setup
+intents = nextcord.Intents.all()
+client = commands.Bot(command_prefix="r!", intents=intents, activity=nextcord.Game(name=' Nothing'))
+client.remove_command('help')
+
+@client.event
+async def on_command_error(ctx, error):
+    await ctx.send(f"Error flagged: {error}")
+
+@client.event
+async def on_application_command_error(ctx, error):
+    await ctx.send(f"Error flagged: {error}")
 
 # Constants
 load_dotenv("env/.env")
@@ -83,25 +95,8 @@ async def loop(track_1, song_count, current_song):
     while song_count < len(track_1) - 1 and datetime.datetime.now(tz).hour < 21:
         song_count = await play_song(song_count)
 
-# Client Setup
-intents = nextcord.Intents.all()
-client = commands.Bot(command_prefix="r!", intents=intents, activity=nextcord.Game(name=' Nothing'))
-
 async def joinup(ctx):
     channel = ctx.author.voice.channel
-    vc = await channel.connect()
-    if current_song != "":
-        rand = random.randint(0, 100000)
-        audio_input = ffmpeg.input(current_song)
-        audio_cut = audio_input.audio.filter('atrim', start=timer)
-        audio_output = ffmpeg.output(audio_cut, f'./assets/trims/out{rand}.mp3', loglevel="quiet")
-        ffmpeg.run(audio_output)
-        vc.play(nextcord.FFmpegPCMAudio(f'./assets/trims/out{rand}.mp3'))
-        return f'./assets/trims/out{rand}.mp3'
-    return None
-
-async def slashjoinup(ctx):
-    channel = ctx.user.voice.channel
     vc = await channel.connect()
     if current_song != "":
         rand = random.randint(0, 100000)
@@ -130,9 +125,6 @@ def cleartrims():
 async def on_ready():
     print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Broadcasting as {client.user.name}")
     client.add_cog(DailyAction(client))
-    client.add_cog(RadioControl(client))
-    client.add_cog(Setup(client))
-    client.add_cog(Tips(client))
     global current_song
     current_song = ""
 
@@ -144,7 +136,7 @@ class DailyAction(commands.Cog):
         self.clear.start()
         self.stop.start()
 
-    @tasks.loop(time=checktime(7, 50, 00, tzinfo=tz))
+    @tasks.loop(time=checktime(7, 52, 00, tzinfo=tz))
     async def generate_programming(self):
         total_time = 0
         track_1 = []
@@ -193,7 +185,7 @@ class DailyAction(commands.Cog):
         print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Programming generated, going live in {datetime.datetime(int(datetime.datetime.now(tz).year), int(datetime.datetime.now(tz).month), int(datetime.datetime.now(tz).day), 8,00,0,tzinfo=tz) - datetime.datetime.now(tz).replace(microsecond=0)}")
         return track_1, track_2, track_3, times, total_time
 
-    @tasks.loop(time=checktime(8, 00, 0, tzinfo=tz))
+    @tasks.loop(time=checktime(8, 2, 0, tzinfo=tz))
     async def play(self):
         global current_song
         song_count = -1
@@ -228,81 +220,131 @@ class DailyAction(commands.Cog):
     async def clear(self):
         cleartrims()
 
-class RadioControl(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
-        self.description = "Manipulates the settings on the radio."
-
-    @commands.command(aliases=["changevolume"], description="Changes the volume of the radio.", help = "Changes the volume of the radio.")
-    async def volume(self,ctx, new_volume=None):
-        if new_volume == None:
-            await ctx.channel.send('Please enter a whole number.')
-            return
-        try:
-            int(new_volume)
-        except:
-            await ctx.channel.send('Please enter a whole number.')
-            return
-        if 0 <= int(new_volume) <= 100:
-            new_volume = int(new_volume) / 100
-            if not ctx.guild.voice_client:
-                await ctx.channel.send('There is no channel connected.')
-            elif not ctx.guild.voice_client.source:
-                await ctx.channel.send('There is no song playing.')
-            else:
-                ctx.guild.voice_client.source.volume = new_volume
-                await ctx.channel.send(f'Set the volume to {new_volume}.')
-        else:
-            await ctx.channel.send('Please enter a number between 0 and 100.')
-
-    @commands.command(description="Sets the radio volume to zero.", help = "Sets the radio volume to zero.")
-    async def mute(self,ctx):
+@client.command(aliases=["changevolume"], description= "Changes the volume of the radio.")
+async def volume(ctx: nextcord.Context, new_volume=None):
+    if new_volume == None:
+        await ctx.channel.send('```Please enter a whole number.```')
+        return
+    try:
+        int(new_volume)
+    except:
+        await ctx.channel.send('```Please enter a whole number.```')
+        return
+    if 0 <= int(new_volume) <= 100:
+        new_volume = int(new_volume) / 100
         if not ctx.guild.voice_client:
-            await ctx.channel.send('There is no channel connected.')
+            await ctx.channel.send('```There is no channel connected.```')
         elif not ctx.guild.voice_client.source:
-            await ctx.channel.send('There is no song playing.')
+            await ctx.channel.send('```There is no song playing.```')
         else:
-            ctx.guild.voice_client.source.volume = 0
+            ctx.guild.voice_client.source.volume = new_volume
+            await ctx.channel.send(f'```Set the volume to {new_volume}.```')
+    else:
+        await ctx.channel.send('```Please enter a number between 0 and 100.```')
 
-class Setup(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
-        self.description = "Sets up the radio."
+@client.command(description= "Sets the radio volume to zero.")
+async def mute(ctx: nextcord.Context):
+    if not ctx.guild.voice_client:
+        await ctx.channel.send('```There is no channel connected.```')
+    elif not ctx.guild.voice_client.source:
+        await ctx.channel.send('```There is no song playing.```')
+    else:
+        ctx.guild.voice_client.source.volume = 0
 
-    @commands.command(aliases=["tunein", "connect"], description="Connects the bot to a voice channel", help = "Connects the bot to a voice channel")
-    async def join(self, ctx):
-        if ctx.author.voice == None:
-            await ctx.channel.send("There is no channel to tune into.")
-        elif ctx.guild.voice_client: 
-            if ctx.guild.voice_client.channel == ctx.user.voice.channel:
-                await ctx.channel.send("I am already in.")
-            else:
-                await ctx.guild.voice_client.disconnect()
-                out = await joinup(ctx)
-                await ctx.channel.send("Joining...")
+@client.command(aliases=["tunein", "connect"], description= "Connects the bot to a voice channel.")
+async def join(ctx: nextcord.Context):
+    if ctx.author.voice == None:
+        await ctx.channel.send("```There is no channel to tune into.```")
+    elif ctx.guild.voice_client: 
+        if ctx.guild.voice_client.channel == ctx.user.voice.channel:
+            await ctx.channel.send("```I am already in.```")
         else:
-            out = await joinup(ctx)
-            await ctx.channel.send("Joining...")
-            
-    @commands.command(aliases=["tuneout", "disconnect"], description="Disconnects the bot from a voice channel.", help = "Disconnects the bot from a voice channel")
-    async def leave(self, ctx):
-        if ctx.guild.voice_client:
             await ctx.guild.voice_client.disconnect()
-            await ctx.channel.send("Leaving...")
-        else:
-            await ctx.channel.send("There is no channel to tune out of.")
+            out = await joinup(ctx)
+            await ctx.channel.send("```Joining...```")
+    else:
+        out = await joinup(ctx)
+        await ctx.channel.send("```Joining...```")
+            
+@client.command(aliases=["tuneout", "disconnect"], description= "Disconnects the bot from a voice channel.")
+async def leave(ctx:nextcord.Context):
+    if ctx.guild.voice_client:
+        await ctx.guild.voice_client.disconnect()
+        await ctx.channel.send("```Leaving...```")
+    else:
+        await ctx.channel.send("```There is no channel to tune out of.```")
 
-class Tips(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
-        self.description = "Sets up the radio."
+@client.slash_command(description="Shows you a character's gift chart.", guild_ids=[1244302066600640613])
+async def gifts(ctx: nextcord.Interaction, character: str = nextcord.SlashOption(name="character", description="A character to choose from", choices=["Universal", "Alex", "Elliot", "Harvey", "Sam", "Sebastian", "Shane", "Abigail", "Haley", "Leah", "Maru", "Penny", "Emily"])):
+    view = ui.View()
+    view.add_item(data.Like(character))
 
-    @commands.command(aliases=["gift"], description="Shows you a character's gift chart.", help = "Shows you a character's gift chart.")
-    async def gifts(self, ctx):
-        view = ui.View()
-        view.add_item(data.Characters())
+    await ctx.send(f"```Choose fields for {character}.```", view=view)
 
-        await ctx.send("Choose a character.", view=view)
+@client.slash_command(description="Shows this message.", guild_ids=[1244302066600640613])
+async def help(ctx, command: str = nextcord.SlashOption(name="command", description="The bot's commands or categories", choices=["Home", "Radio Control", "Setup", "Tips", "mute", "volume", "join", "leave", "gifts", "help"])):
+    if command == "Home":
+        await ctx.send('''
+```Radio Control:
+  mute   Sets the radio volume to zero.
+  volume Changes the volume of the radio.
+Setup:
+  join   Connects the bot to a voice channel.
+  leave  Disconnects the bot from a voice channel.
+Tips:
+  /gifts Shows you a character's gift chart.
+Other:
+  /help  Shows this message.
+
+Type /help command for more info on a command.
+You can also type /help category for more info on a category
+Any command marked with a / is a slash command.```
+''')
+    elif command == "Radio Control":
+        await ctx.send('''
+```Radio Control:
+  mute   Sets the radio volume to zero.
+  volume Changes the volume of the radio.```
+''')
+    elif command == "Setup":
+        await ctx.send('''
+```Setup:
+  join   Connects the bot to a voice channel
+  leave  Disconnects the bot from a voice channel.```
+''')
+    elif command == "Tips":
+        await ctx.send('''
+```Tips:
+  /gifts Shows you a character's gift chart.```
+''')
+    elif command == "volume":
+        await ctx.send('''
+```Aliases: changevolume
+
+r!volume <new_volume>
+
+Changes the volume of the radio.```
+''')
+    elif command == "gifts":
+        await ctx.send('''
+```/gifts <character>
+
+Shows you a character's gift chart.```
+''')
+    elif command == "help":
+        await ctx.send('''
+```/help
+
+Shows this message.```
+''')
+    else:
+        desc = eval(f"getattr({command}, 'description')")
+        await ctx.send(f'''
+```r!{command}
+
+{desc}```
+''')
+
         
 @client.event
 async def on_close():
