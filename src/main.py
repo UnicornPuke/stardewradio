@@ -18,11 +18,16 @@ import random
 from stringcolor import *
 from nextcord.ext import commands, tasks
 from nextcord import ui
-import data
+import characterdata
+import itemdata
 import pytz
 tzpy = pytz.timezone('US/Eastern')
 global tz
+import sqlite3
+from createdata import data
 tz = timezone(datetime.timedelta(hours=-5) + datetime.datetime.now(tzpy).dst())
+
+itemdata, cursor_obj, connection_obj = data()
 
 # Client Setup
 intents = nextcord.Intents.all()
@@ -36,6 +41,11 @@ async def on_command_error(ctx, error):
 @client.event
 async def on_application_command_error(ctx, error):
     await ctx.send(f"```Error flagged: {error}```")
+
+async def my_autocomplete(ctx, option: str):
+    all_options = ['Amaranth','Amethyst','Aquamarine','Artichoke Dip',"Autumn's Bounty",'Baked Fish','Banana Pudding','Battery Pack','Bean Hotpot','Beer','Beet','Blackberry Cobbler','Blueberry','Blueberry Tart','Cactus Fruit','Carp Surprise','Catfish','Cauliflower','Cave Carrot','Chanterelle','Cheese Cauliflower','Chocolate Cake','Chowder','Clay','Cloth','Coconut','Coffee','Common Mushroom','Complete Breakfast', 'Copper Bar', 'Crab Cakes', 'Cranberry Candy', 'Crispy Bass', 'Crocus', 'Daffodil', 'Dandelion', 'Diamond', "Dish O' The Sea", 'Dragon Tooth', 'Driftwood', 'Duck Egg', 'Duck Feather', 'Eggplant Parmesan', 'Emerald', 'Escargot', 'Fairy Rose', "Farmer's Lunch", 'Fiddlehead Risotto', 'Fish Stew', 'Fish Taco', 'Flounder', 'Fried Calamari', 'Fried Eel', 'Fried Mushroom', 'Frozen Tear', 'Fruit Salad', 'Ginger', 'Ginger Ale', 'Glazed Yams', 'Goat Cheese', 'Goat Milk', 'Gold Bar', 'Grape', 'Green Tea', 'Hazelnut', 'Holly', 'Hot Pepper', 'Ice Cream', 'Iridium Bar', 'Jade', 'Jelly', 'Joja Cola', 'Large Goat Milk', 'Leek', 'Lemon Stone', 'Lingcod', 'Lobster', 'Lobster Bisque', 'Magma Cap', 'Mango', 'Mango Sticky Rice', 'Maple Bar', 'Mead', 'Melon', "Miner's Treat", 'Morel', 'Nautilus Shell', 'Oak Resin', 'Obsidian', 'Octopus', 'Omni Geode', 'Orange', 'Ostrich Egg', 'Pale Ale', 'Pancakes', 'Parsnip Soup', 'Peach', 'Pepper Poppers', 'Pickles', 'Piña Colada', 'Pine Tar', 'Pink Cake', 'Pizza', 'Plum Pudding', 'Poi', 'Pomegranate', 'Poppy', 'Poppyseed Muffin', 'Pufferfish', 'Pumpkin', 'Pumpkin Pie', 'Pumpkin Soup', 'Purple Mushroom', 'Quartz', 'Radioactive Bar', 'Radioactive Ore', 'Rainbow Shell', 'Red Plate', 'Rhubarb Pie', 'Rice Pudding', 'Roasted Hazelnuts', 'Roots Platter', 'Ruby', 'Salad', 'Salmon Dinner', 'Sandfish', 'Sashimi', 'Sea Cucumber', 'Sea Urchin', 'Seafoam Pudding', 'Snail', 'Snow Yam', 'Solar Essence', 'Spaghetti', 'Spice Berry', 'Spicy Eel', 'Squid', 'Squid Ink', 'Stir Fry', 'Strawberry', 'Stuffing', 'Sturgeon', 'Sugar', 'Summer Spangle', 'Sunflower', 'Super Cucumber', 'Super Meal', 'Survival Burger', 'Sweet Pea', 'Tea Leaves', 'Tiger Trout', 'Tigerseye', 'Tom Kha Soup', 'Topaz', 'Tropical Curry', 'Trout Soup', 'Truffle', 'Truffle Oil', 'Tulip', 'Vegetable Medley', 'Void Egg', 'Void Essence', 'Void Mayonnaise', 'Wild Horseradish', 'Wine', 'Winter Root', 'Wool', 'Yam']  # Your full list
+    filtered_options = [i for i in all_options if i.lower().startswith(option.lower())]
+    return filtered_options[:25]  # Slice to return only 25 options
 
 # Constants
 load_dotenv("env/.env")
@@ -242,6 +252,11 @@ async def volume(ctx, new_volume=None):
     else:
         await ctx.channel.send('```Please enter a number between 0 and 100.```')
 
+@client.slash_command(description="Shows you an item's data",guild_ids=[1244302066600640613])
+async def items(ctx: nextcord.Interaction, item: str = nextcord.SlashOption(autocomplete_callback=my_autocomplete)):
+    cursor_obj.execute("SELECT [%s] FROM [cooltable]" % item) 
+    await ctx.send(cursor_obj.fetchall())
+
 @client.command(description= "Sets the radio volume to zero.")
 async def mute(ctx):
     if not ctx.guild.voice_client:
@@ -268,6 +283,7 @@ async def join(ctx):
             
 @client.command(aliases=["tuneout", "disconnect"], description= "Disconnects the bot from a voice channel.")
 async def leave(ctx):
+    cursor_obj.close()
     if ctx.guild.voice_client:
         await ctx.guild.voice_client.disconnect()
         await ctx.channel.send("```Leaving...```")
@@ -277,7 +293,7 @@ async def leave(ctx):
 @client.slash_command(description="Shows you a character's gift chart.", guild_ids=[1244302066600640613])
 async def gifts(ctx: nextcord.Interaction, character: str = nextcord.SlashOption(name="character", description="A character to choose from", choices=["Universal", "Alex", "Elliot", "Harvey", "Sam", "Sebastian", "Shane", "Abigail", "Haley", "Leah", "Maru", "Penny", "Emily"])):
     view = ui.View()
-    view.add_item(data.Like(character))
+    view.add_item(characterdata.Like(character))
 
     await ctx.send(f"```Choose fields for {character}. You have 15 seconds.```", view=view, delete_after=15, ephemeral=True)
 
