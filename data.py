@@ -89,7 +89,7 @@ Vinegar
 Void Egg
 Void Essence
 Wheat Flour```'''
-        self.Neutral = '''```Neutral:\n\nAll Books (Except Price Catalogue)
+        self.Neutral = '''```Neutral:\n\nAll Books (except Price Catalogue)
 Bread
 Coral
 Duck Feather
@@ -103,7 +103,7 @@ Sweet Gem Berry
 Tea Leaves
 Truffle
 Wool```'''
-        self.Like = "```diff\n+ Likes:\n\nAll Artisan Goods (Except Oil and Void Mayonnaise)\nAll Cooking (Except Fried Egg, Bread, Strange Bun, and Seafom Pudding)\nAll Flowers (Except Poppy)\nAll Foraged Materials (Except Quartz)\nAll Fruit Tree Fruits (Except Banana and Mango)\nAll Gems (Except Prismatic Shards)\nAll Vegetables (Except Hops, Tea Leaves, Wheat, and Unmilled Rice)\nFiddlehead Fern\nMaple Syrup\nPiña Colada\nRainbow Shell\nTreasure Chest```"
+        self.Like = "```diff\n+ Likes:\n\nAll Artisan Goods (except Oil and Void Mayonnaise)\nAll Cooking (except Fried Egg, Bread, Strange Bun, and Seafom Pudding)\nAll Flowers (except Poppy)\nAll Foraged Materials (except Quartz)\nAll Fruit Tree Fruits (except Banana and Mango)\nAll Gems (except Prismatic Shards)\nAll Vegetables (except Hops, Tea Leaves, Wheat, and Unmilled Rice)\nFiddlehead Fern\nMaple Syrup\nPiña Colada\nRainbow Shell\nTreasure Chest```"
         self.Love = "```diff\n++ Loves:\n\nGolden Pumpkin\nPearl\nPrismatic Shard\nRabbit's Foot\nStardrop Tea```"
 
 class Alex:
@@ -136,7 +136,7 @@ Snow Yam
 Winter Root```'''
         self.Like = '''```diff\n+ Likes:
 All Universal Likes
-All Eggs (Except Void Egg)
+All Eggs (except Void Egg)
 Dinosaur Egg
 Field Snack
 Parrot Egg```'''
@@ -556,6 +556,173 @@ Stir Fry
 Truffle
 Vegetable Medley
 Wine```'''
+
+class Maru:
+    def __init__(self):
+        self.Hate = '''```diff\n-- Hates:\n
+All Universal Hates (except Radioactive Bar & Radioactive Ore)
+Holly
+Honey
+Pickles
+Snow Yam
+Truffle```'''
+        self.Dislike = '''```diff\n- Dislikes:\n
+All Universal Dislikes (except Battery Pack, Copper Bar, Dwarf Gadget, Gold Bar, Iridium Bar, Iron Bar, Oak Resin, & Pine Tar)
+Blackberry
+Common Mushroom
+Crystal Fruit
+Maple Syrup
+Salmonberry```'''
+        self.Neutral = '''```Neutral:\n
+All Universal Neutrals (except Truffle)
+All Eggs (except Void Egg)*
+All Fruit (except Blackberry, Crystal Fruit, Fruit Tree Fruit, Salmonberry, & Strawberry)
+All Milk
+Daffodil
+Dandelion
+Ginger
+Hazelnut
+Leek
+Wild Horseradish
+Winter Root
+
+*Dinosaur Eggs do not count as eggs, but artifacts.```'''
+        self.Like = '''```diff\n+ Likes:
+All Universal Likes (except Honey, Maple Syrup, & Pickles)
+Chanterelle
+Copper Bar
+Iron Bar
+Magma Cap
+Morel
+Oak Resin
+Pine Tar
+Purple Mushroom
+Quartz
+Radioactive Ore```'''
+        self.Love = '''```diff\n++ Loves:\n
+All Universal Loves
+Battery Pack
+Cauliflower
+Cheese Cauliflower
+Diamond
+Dwarf Gadget
+Gold Bar
+Iridium Bar
+Miner's Treat
+Pepper Poppers
+Radioactive Bar
+Rhubarb Pie
+Strawberry```'''
+
+class Penny:
+    def __init__(self):
+        self.Hate = '''```diff\n-- Hates:\n
+All Universal Hates (except Poppy and Red Mushroom)
+Beer
+Grape
+Holly
+Hops
+Mead
+Pale Ale
+Piña Colada
+Rabbit's Foot
+Wine```'''
+        self.Dislike = '''```diff\n- Dislikes:\n
+All Universal Dislikes (except Artifacts, Price Catalogue, & Sandfish)
+Algae Soup
+Duck Feather
+Pale Broth
+Purple Mushroom
+Quartz
+Red Mushroom
+Salmonberry
+Wool```'''
+        self.Neutral = '''```Neutral:\n
+All Universal Neutrals (except Books, Duck Feather, Hops, & Wool)
+All Eggs (except Void Egg)*
+All Fruit (except Fruit Tree Fruit, Grape, Melon, & Salmonberry)
+Chanterelle
+Common Mushroom
+Daffodil
+Ginger
+Hazelnut
+Magma Cap
+Morel
+Snow Yam
+Wild Horseradish
+Winter Root
+
+*Dinosaur Eggs do not count as eggs, but artifacts.```'''
+        self.Like = '''```diff\n+ Likes:
+All Universal Likes (except Algae Soup, Beer, Mead, Pale Ale, Pale Broth, Piña Colada, & Wine)
+All Milk
+All Artifacts
+Dandelion
+Leek```'''
+        self.Love = '''```diff\n++ Loves:\n
+All Universal Loves (except Rabbit's Foot)
+All Books
+Diamond
+Emerald
+Melon
+Poppy
+Poppyseed Muffin
+Red Plate
+Roots Platter
+Sandfish
+Tom Kha Soup``'''
+
+class Emily:
+    def __init__(self):
+        self.Hate = '''```diff\n-- Hates:\n
+All Universal Hates
+Fish Taco
+Holly
+Maki Roll
+Salmon Dinner
+Sashimi```'''
+        self.Dislike = '''```diff\n- Dislikes:\n
+All Universal Dislikes (except Parrot Egg)
+Fried Eel
+Ice Cream
+Rice Pudding
+Salmonberry
+Spicy Eel```'''
+        self.Neutral = '''```Neutral:\n
+All Universal Neutrals (except Wool)
+All Eggs (except Void Egg)*
+All Fruit (except Fruit Tree Fruit & Salmonberry)
+All Milk
+Chanterelle
+Common Mushroom
+Dandelion
+Ginger
+Hazelnut
+Leek
+Magma Cap
+Morel
+Purple Mushroom
+Snow Yam
+Wild Horseradish
+Winter Root
+
+*Dinosaur Eggs do not count as eggs, but artifacts.```'''
+        self.Like = '''```diff\n+ Likes:
+All Universal Likes (except Fish Taco, Fried Eel, Ice Cream, Maki Roll, Rice Pudding, Salmon Dinner, Spicy Eel, & Sashimi)
+Daffodil
+Quartz```'''
+        self.Love = '''```diff\n++ Loves:\n
+All Universal Loves
+Amethyst
+Aquamarine
+Cloth
+Emerald
+Jade
+Parrot Egg
+Ruby
+Survival Burger
+Topaz
+Wool``'''
 
 class Like(ui.Select):
     def __init__(self, character):
