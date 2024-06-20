@@ -108,9 +108,32 @@ Wool```'''
 
 class Alex:
     def __init__(self):
-        self.Hate = "```diff\n-- Hates:```"
-        self.Dislike = "```diff\n- Dislikes:```"
-        self.Neutral = "```Neutral:```"
+        self.Hate = '''```diff\n-- Hates:\n
+All Universal Hates
+Holly
+Quartz```'''
+        self.Dislike = '''```diff\n- Dislikes:\n
+All Universal Dislikes (except Dinosaur Egg, Frog Egg, and Parrot Egg)
+All Books (except Jack Be Nimble, Jack Be Thick)
+Salmonberry
+Wild Horseradish```'''
+        self.Neutral = '''```Neutral:\n
+All Universal Neutrals (except Books)
+All Fruit (except Fruit Tree Fruit and Salmonberry)
+All Milk
+Chanterelle
+Common Mushroom
+Daffodil
+Dandelion
+Frog Egg
+Ginger
+Hazelnut
+Leek
+Magma Cap
+Morel
+Purple Mushroom
+Snow Yam
+Winter Root```'''
         self.Like = '''```diff\n+ Likes:
 All Universal Likes
 All Eggs (Except Void Egg)
@@ -122,6 +145,58 @@ All Universal Loves
 Complete Breakfast
 Jack Be Nimble, Jack Be Thick
 Salmon Dinner```'''
+
+class Elliot:
+    def __init__(self):
+        self.Hate = '''```diff\n-- Hates:\n
+All Universal Hates (except Sea Urchin)
+Amaranth
+Quartz
+Salmonberry
+Sea Cucumber*
+Super Cucumber*
+
+Elliot will return any Sea Cucumbers that are given to him.```'''
+        self.Dislike = '''```diff\n- Dislikes:\n
+All Universal Dislikes (except Fish)
+All Milk
+Chanterelle
+Common Mushroom
+Daffodil
+Dandelion
+Ginger
+Hazelnut
+Holly
+Leek
+Magma Cap
+Morel
+Pizza
+Purple Mushroom
+Snow Yam
+Wild Horseradish
+Winter Root```'''
+        self.Neutral = '''```Neutral:\n
+All Universal Neutrals (except Books, Duck Feather, and Squid Ink)
+All Eggs (except Void Egg)*
+All Fish (except Carp, Lobster, Octopus, Sea Cucumber, Snail, and Squid)
+Rainbow Shell
+Sea Urchin
+
+*Dinosaur Eggs do not count as eggs, but artifacts```'''
+        self.Like = '''```diff\n+ Likes:
+All Universal Likes (except Amaranth, Pizza, and Rainbow Shell)
+All Books
+All Fruit (except Pomegranate and Salmonberry)
+Octopus
+Squid```'''
+        self.Love = '''```diff\n++ Loves:\n
+All Universal Loves
+Crab Cakes
+Duck Feather
+Lobster
+Pomegranate
+Squid Ink
+Tom Kha Soup```'''
 
 class Like(ui.Select):
     def __init__(self, character):
@@ -137,9 +212,15 @@ class Like(ui.Select):
 
     async def callback(self, interaction):
         result = []
+        results = ""
         for i in self.values:
             result.append(eval(f"{self.character}().{i}"))
-        await interaction.response.send_message(result[0])
-        result.pop(0)
-        for i in result:
-            await interaction.followup.send(content=i)
+        for i in self.values:
+            results += eval(f"{self.character}().{i}")
+        if len(results) < 2000:
+            await interaction.response.send_message(results)
+        else:
+            await interaction.response.send_message(result[0])
+            result.pop(0)
+            for i in result:
+                await interaction.followup.send(content=i)

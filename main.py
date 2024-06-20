@@ -31,11 +31,11 @@ client.remove_command('help')
 
 @client.event
 async def on_command_error(ctx, error):
-    await ctx.send(f"Error flagged: {error}")
+    await ctx.send(f"```Error flagged: {error}```")
 
 @client.event
 async def on_application_command_error(ctx, error):
-    await ctx.send(f"Error flagged: {error}")
+    await ctx.send(f"```Error flagged: {error}```")
 
 # Constants
 load_dotenv("env/.env")
@@ -136,7 +136,7 @@ class DailyAction(commands.Cog):
         self.clear.start()
         self.stop.start()
 
-    @tasks.loop(time=checktime(7, 52, 00, tzinfo=tz))
+    @tasks.loop(time=checktime(7, 57, 00, tzinfo=tz))
     async def generate_programming(self):
         total_time = 0
         track_1 = []
@@ -185,7 +185,7 @@ class DailyAction(commands.Cog):
         print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Programming generated, going live in {datetime.datetime(int(datetime.datetime.now(tz).year), int(datetime.datetime.now(tz).month), int(datetime.datetime.now(tz).day), 8,00,0,tzinfo=tz) - datetime.datetime.now(tz).replace(microsecond=0)}")
         return track_1, track_2, track_3, times, total_time
 
-    @tasks.loop(time=checktime(8, 2, 0, tzinfo=tz))
+    @tasks.loop(time=checktime(8, 0, 0, tzinfo=tz))
     async def play(self):
         global current_song
         song_count = -1
@@ -221,7 +221,7 @@ class DailyAction(commands.Cog):
         cleartrims()
 
 @client.command(aliases=["changevolume"], description= "Changes the volume of the radio.")
-async def volume(ctx: nextcord.Context, new_volume=None):
+async def volume(ctx, new_volume=None):
     if new_volume == None:
         await ctx.channel.send('```Please enter a whole number.```')
         return
@@ -243,7 +243,7 @@ async def volume(ctx: nextcord.Context, new_volume=None):
         await ctx.channel.send('```Please enter a number between 0 and 100.```')
 
 @client.command(description= "Sets the radio volume to zero.")
-async def mute(ctx: nextcord.Context):
+async def mute(ctx):
     if not ctx.guild.voice_client:
         await ctx.channel.send('```There is no channel connected.```')
     elif not ctx.guild.voice_client.source:
@@ -252,7 +252,7 @@ async def mute(ctx: nextcord.Context):
         ctx.guild.voice_client.source.volume = 0
 
 @client.command(aliases=["tunein", "connect"], description= "Connects the bot to a voice channel.")
-async def join(ctx: nextcord.Context):
+async def join(ctx):
     if ctx.author.voice == None:
         await ctx.channel.send("```There is no channel to tune into.```")
     elif ctx.guild.voice_client: 
@@ -267,7 +267,7 @@ async def join(ctx: nextcord.Context):
         await ctx.channel.send("```Joining...```")
             
 @client.command(aliases=["tuneout", "disconnect"], description= "Disconnects the bot from a voice channel.")
-async def leave(ctx:nextcord.Context):
+async def leave(ctx):
     if ctx.guild.voice_client:
         await ctx.guild.voice_client.disconnect()
         await ctx.channel.send("```Leaving...```")
@@ -279,7 +279,7 @@ async def gifts(ctx: nextcord.Interaction, character: str = nextcord.SlashOption
     view = ui.View()
     view.add_item(data.Like(character))
 
-    await ctx.send(f"```Choose fields for {character}.```", view=view)
+    await ctx.send(f"```Choose fields for {character}. You have 10 seconds.```", view=view, delete_after=10, ephemeral=True)
 
 @client.slash_command(description="Shows this message.", guild_ids=[1244302066600640613])
 async def help(ctx, command: str = nextcord.SlashOption(name="command", description="The bot's commands or categories", choices=["Home", "Radio Control", "Setup", "Tips", "mute", "volume", "join", "leave", "gifts", "help"])):
