@@ -3,4 +3,7 @@ TODO:
     - Add more item data
     - Figure out embeds
     - Add non-bachelors
+- Rework Radio
+    - Remove live element
+    - Just make it play
 - Publish

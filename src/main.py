@@ -34,13 +34,13 @@ intents = nextcord.Intents.all()
 client = commands.Bot(command_prefix="r!", intents=intents, activity=nextcord.Game(name=' Nothing'))
 client.remove_command('help')
 
-@client.event
-async def on_command_error(ctx, error):
-    await ctx.send(f"```Error flagged: {error}```")
+# @client.event
+# async def on_command_error(ctx, error):
+#     await ctx.send(f"```Error flagged: {error}```")
 
-@client.event
-async def on_application_command_error(ctx, error):
-    await ctx.send(f"```Error flagged: {error}```")
+# @client.event
+# async def on_application_command_error(ctx, error):
+#     await ctx.send(f"```Error flagged: {error}```")
 
 async def my_autocomplete(ctx, option: str):
     all_options = ['Amaranth','Amethyst','Aquamarine','Artichoke Dip',"Autumn's Bounty",'Baked Fish','Banana Pudding','Battery Pack','Bean Hotpot','Beer','Beet','Blackberry Cobbler','Blueberry','Blueberry Tart','Cactus Fruit','Carp Surprise','Catfish','Cauliflower','Cave Carrot','Chanterelle','Cheese Cauliflower','Chocolate Cake','Chowder','Clay','Cloth','Coconut','Coffee','Common Mushroom','Complete Breakfast', 'Copper Bar', 'Crab Cakes', 'Cranberry Candy', 'Crispy Bass', 'Crocus', 'Daffodil', 'Dandelion', 'Diamond', "Dish O' The Sea", 'Dragon Tooth', 'Driftwood', 'Duck Egg', 'Duck Feather', 'Eggplant Parmesan', 'Emerald', 'Escargot', 'Fairy Rose', "Farmer's Lunch", 'Fiddlehead Risotto', 'Fish Stew', 'Fish Taco', 'Flounder', 'Fried Calamari', 'Fried Eel', 'Fried Mushroom', 'Frozen Tear', 'Fruit Salad', 'Ginger', 'Ginger Ale', 'Glazed Yams', 'Goat Cheese', 'Goat Milk', 'Gold Bar', 'Grape', 'Green Tea', 'Hazelnut', 'Holly', 'Hot Pepper', 'Ice Cream', 'Iridium Bar', 'Jade', 'Jelly', 'Joja Cola', 'Large Goat Milk', 'Leek', 'Lemon Stone', 'Lingcod', 'Lobster', 'Lobster Bisque', 'Magma Cap', 'Mango', 'Mango Sticky Rice', 'Maple Bar', 'Mead', 'Melon', "Miner's Treat", 'Morel', 'Nautilus Shell', 'Oak Resin', 'Obsidian', 'Octopus', 'Omni Geode', 'Orange', 'Ostrich Egg', 'Pale Ale', 'Pancakes', 'Parsnip Soup', 'Peach', 'Pepper Poppers', 'Pickles', 'Piña Colada', 'Pine Tar', 'Pink Cake', 'Pizza', 'Plum Pudding', 'Poi', 'Pomegranate', 'Poppy', 'Poppyseed Muffin', 'Pufferfish', 'Pumpkin', 'Pumpkin Pie', 'Pumpkin Soup', 'Purple Mushroom', 'Quartz', 'Radioactive Bar', 'Radioactive Ore', 'Rainbow Shell', 'Red Plate', 'Rhubarb Pie', 'Rice Pudding', 'Roasted Hazelnuts', 'Roots Platter', 'Ruby', 'Salad', 'Salmon Dinner', 'Sandfish', 'Sashimi', 'Sea Cucumber', 'Sea Urchin', 'Seafoam Pudding', 'Snail', 'Snow Yam', 'Solar Essence', 'Spaghetti', 'Spice Berry', 'Spicy Eel', 'Squid', 'Squid Ink', 'Stir Fry', 'Strawberry', 'Stuffing', 'Sturgeon', 'Sugar', 'Summer Spangle', 'Sunflower', 'Super Cucumber', 'Super Meal', 'Survival Burger', 'Sweet Pea', 'Tea Leaves', 'Tiger Trout', 'Tigerseye', 'Tom Kha Soup', 'Topaz', 'Tropical Curry', 'Trout Soup', 'Truffle', 'Truffle Oil', 'Tulip', 'Vegetable Medley', 'Void Egg', 'Void Essence', 'Void Mayonnaise', 'Wild Horseradish', 'Wine', 'Winter Root', 'Wool', 'Yam']  # Your full list
@@ -146,7 +146,7 @@ class DailyAction(commands.Cog):
         self.clear.start()
         self.stop.start()
 
-    @tasks.loop(time=checktime(7, 57, 00, tzinfo=tz))
+    @tasks.loop(time=checktime(16, 39, 00, tzinfo=tz))
     async def generate_programming(self):
         total_time = 0
         track_1 = []
@@ -195,7 +195,7 @@ class DailyAction(commands.Cog):
         print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Programming generated, going live in {datetime.datetime(int(datetime.datetime.now(tz).year), int(datetime.datetime.now(tz).month), int(datetime.datetime.now(tz).day), 8,00,0,tzinfo=tz) - datetime.datetime.now(tz).replace(microsecond=0)}")
         return track_1, track_2, track_3, times, total_time
 
-    @tasks.loop(time=checktime(8, 0, 0, tzinfo=tz))
+    @tasks.loop(time=checktime(16, 40, 0, tzinfo=tz))
     async def play(self):
         global current_song
         song_count = -1
@@ -254,8 +254,69 @@ async def volume(ctx, new_volume=None):
 
 @client.slash_command(description="Shows you an item's data",guild_ids=[1244302066600640613])
 async def items(ctx: nextcord.Interaction, item: str = nextcord.SlashOption(autocomplete_callback=my_autocomplete)):
+    people = ['Abigail',	'Alex',	'Caroline',	'Clint',	'Demetrius',	'Dwarf',	'Elliott',	'Emily',	'Evelyn',	'George',	'Gus',	'Haley',	'Harvey',	'Jas',	'Jodi',	'Kent',	'Krobus',	'Leah',	'Leo',	'Lewis',	'Linus',	'Marnie',	'Maru',	'Pam',	'Penny',	'Pierre',	'Robin',	'Sam',	'Sandy',	'Sebastian',	'Shane',	'Vincent',	'Willy',	'Wizard',]
     cursor_obj.execute("SELECT [%s] FROM [cooltable]" % item) 
-    await ctx.send(cursor_obj.fetchall())
+    oliked = cursor_obj.fetchall()
+    liked = []
+    for i in oliked:
+        liked.append(i[0])
+    Lovei = []
+    Likei = []
+    Neutrali = []
+    Dislikei = []
+    Hatei = []
+    count = 0
+    for i in liked:
+        exec(f'{i}i.append("{people[count]}")')
+        count += 1
+    Love = "```"
+    Like = "```"
+    Neutral = "```"
+    Dislike = "```"
+    Hate = "```"
+    for i in Lovei:
+        Love += f"\n{i}\t"
+    for i in Likei:
+        Like += f"\n{i}\t"
+    for i in Neutrali:
+        Neutral += f"\n{i}\t"
+    for i in Dislikei:
+        Dislike += f"\n{i}\t"
+    for i in Hatei:
+        Hate += f"\n{i}\t"
+    Love += " ```"
+    Like += " ```"
+    Hate += " ```"
+
+    count1 = Neutral.count("\n")
+    count2 = Dislike.count("\n")
+
+    if count1 < count2:
+        if count1 == 0:
+            countthing = 1
+        else:
+            countthing = 0
+        for i in range(countthing, count2-count1):
+            Neutral += "\t\n"
+    else:
+        if count2 == 0:
+            countthing = 1
+        else:
+            countthing = 0
+        for i in range(countthing, count1-count2):
+            Dislike += "\t\n"
+
+    Neutral += " ```"
+    Dislike += " ```"
+
+
+    embed = nextcord.Embed(title=item, color=0x70c725)
+    embed.add_field(name="Loves", value=Love, inline= False)
+    embed.add_field(name="Likes", value=Like, inline= False)
+    embed.add_field(name="Neutral", value=Neutral)
+    embed.add_field(name="Dislikes", value=Dislike)
+    embed.add_field(name="Hates", value=Hate, inline= False)
+    await ctx.send(embed=embed)
 
 @client.command(description= "Sets the radio volume to zero.")
 async def mute(ctx):
