@@ -53,7 +53,7 @@ async def my_autocomplete2(ctx, option: str):
 
 # Constants
 load_dotenv("env/.env")
-if sys.argv[1] == 'main':
+if sys.argv[1] == 'test':
     TOKEN = os.getenv("TESTTOKEN")
 else:
     TOKEN = os.getenv("MAINTOKEN")
@@ -316,8 +316,6 @@ async def leave(ctx):
 
 @client.slash_command(description="Shows you a character's gift chart.", guild_ids=[1244302066600640613])
 async def characters(ctx: nextcord.Interaction, character: str = nextcord.SlashOption(name="character", description="A character to choose from", choices=["Universal", "Alex", "Elliot", "Harvey", "Sam", "Sebastian", "Shane", "Abigail", "Haley", "Leah", "Maru", "Penny", "Emily"])):
-    view = ui.View()
-
     Neutral = eval(f"characterdata.{character}().Neutral")
     Dislike = eval(f"characterdata.{character}().Dislike")
     count1 = Neutral.count("\n")
@@ -343,7 +341,6 @@ async def characters(ctx: nextcord.Interaction, character: str = nextcord.SlashO
     embed.add_field(name="Neutral", value=Neutral)
     embed.add_field(name="Dislike", value=Dislike)
     embed.add_field(name="Hate", value=eval(f"characterdata.{character}().Hate"),inline=False)
-    characterdata.Like(character)
 
     await ctx.send(embed=embed)
 
