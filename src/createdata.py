@@ -8,6 +8,7 @@ def data():
     cursor_obj = connection_obj.cursor()
 
     cursor_obj.execute("DROP TABLE IF EXISTS [cooltable]")
+    cursor_obj.execute("DROP TABLE IF EXISTS [fish]")
     
     
     # Creating table
@@ -222,8 +223,88 @@ def data():
     for i in insert:
         cursor_obj.execute(i)
         connection_obj.commit()
-    cursor_obj.execute('''SELECT * FROM [cooltable]''')
-    output = cursor_obj.fetchall()
-    return output, cursor_obj, connection_obj
+    table = """CREATE TABLE [fish] (
+  [Fish] TEXT,
+  [Base Price] INT,
+  [Price] INT,
+  [Silver Price] INT,
+  [Gold Price] INT,
+  [Iridium Price] INT,
+  [Spring] TEXT,
+  [Summer] TEXT,
+  [Fall] TEXT,
+  [Winter] TEXT,
+  [Weather] TEXT,
+  [Location] TEXT,
+  [Time] TEXT,
+  [Difficulty] TEXT,
+  [Bundle] TEXT,
+  [Caught?] INT
+);"""
+
+    insert = """INSERT INTO [fish] ([Fish],[Base Price],[Price],[Silver Price],[Gold Price],[Iridium Price],[Spring],[Summer],[Fall],[Winter],[Weather],[Location],[Time],[Difficulty],[Bundle],[Caught?])
+VALUES
+('Albacore',75,75,93,112,150,'No','No','Yes','Yes','Any','Ocean','6 AM - 11 AM
+6 PM - 2 AM','Hard','No',FALSE),
+('Anchovy',30,30,37,45,60,'Yes','No','Yes','No','Any','Ocean','Anytime','Easy','No',FALSE),
+('Angler',900,900,1125,1350,1800,'No','No','Yes','No','Any','River','Anytime','Very hard','No',FALSE),
+('Blob Fish',500,500,625,750,1000,'No','No','No','Yes','Any','Night Market','5 PM - 2 AM','Hard','No',FALSE),
+('Blue Discus',120,120,150,180,240,'Yes','Yes','Yes','Yes','Any','Ginger Island','Anytime','Medium','No',FALSE),
+('Bream',45,45,56,67,90,'Yes','Yes','Yes','Yes','Any','River','6 PM - 2 AM','Easy','Night Fishing Bundle',FALSE),
+('Bullhead',75,75,93,112,150,'Yes','Yes','Yes','Yes','Any','Mountain Lake','Anytime','Medium','Lake Fish Bundle',FALSE),
+('Carp',30,30,37,45,60,'Yes','Yes','Yes','Yes','Any','Mountain Lake, Secret Woods','Anytime','Very Easy','Lake Fish Bundle',FALSE),
+('Catfish',200,200,250,300,400,'Yes','No','Yes','No','Rainy','Secret Woods, River, Witch''s Swamp','Anytime','Very Hard','River Fish Bundle',FALSE),
+('Chub',50,50,62,75,100,'Yes','Yes','Yes','Yes','Any','Mountain Lake, River','Anytime','Easy','Field Research Bundle',FALSE),
+('Crimsonfish',1500,1500,1875,2250,3000,'No','Yes','No','No','Any','Ocean','Anytime','Extreme','No',FALSE),
+('Dorado',100,100,125,150,200,'No','Yes','No','No','Any','River','6 AM - 7 PM','Very Hard','No',FALSE),
+('Eel',85,85,106,127,170,'Yes','No','Yes','No','Rainy','Ocean','4 PM - 2 AM','Hard','Night Fishing Bundle',FALSE),
+('Flounder',100,100,125,150,200,'Yes','Yes','No','No','Any','Ocean','6 AM - 8 PM','Medium','No',FALSE),
+('Ghostfish',45,45,56,67,90,'Yes','Yes','Yes','Yes','Any','Mines','Anytime','Medium','Specialty Fish Bundle',FALSE),
+('Glacierfish',1000,1000,1250,1500,2000,'No','No','No','Yes','Any','River','6 AM - 11 PM','Extreme','No',FALSE),
+('Gobi',150,150,187,225,300,'Yes','Yes','Yes','Yes','Any','Waterfalls','Anytime','Medium','No',FALSE),
+('Halibut',80,80,100,120,160,'Yes','Yes','No','Yes','Any','Ocean','Anytime','Medium','No',FALSE),
+('Herring',30,30,37,45,60,'Yes','No','No','Yes','Any','Ocean','Anytime','Very Easy','No',FALSE),
+('Ice Pip',500,500,625,750,1000,'Yes','Yes','Yes','Yes','Any','Mines','Anytime','Very Hard','No',FALSE),
+('Largemouth Bass',100,100,125,150,200,'Yes','Yes','Yes','Yes','Any','Mountain Lake','6 AM - 7 PM','Medium','Lake Fish Bundle',FALSE),
+('Lava Eel',700,700,875,1050,1400,'Yes','Yes','Yes','Yes','Any','Mines','Anytime','Extreme','No',FALSE),
+('Legend',5000,5000,6250,7500,10000,'Yes','No','No','No','Rainy','Mountain Lake','6 AM - 11 PM','Extreme','No',FALSE),
+('Lingcod',120,120,150,180,240,'No','No','No','Yes','Any','Mountain Lake, River','Anytime','Very Hard','No',FALSE),
+('Lionfish',100,100,125,150,200,'Yes','Yes','Yes','Yes','Any','Ginger Island','Anytime','Medium','No',FALSE),
+('Midnight Carp',150,150,187,225,300,'No','No','Yes','Yes','Any','Mountain Lake, Forest Pond, Ginger Island North & West (freshwater)','10 PM - 2 AM','Medium','No',FALSE),
+('Midnight Squid',100,100,125,150,200,'No','No','No','Yes','Any','Night Market','5 PM - 2 AM','Medium','No',FALSE),
+('Mutant Carp',1000,1000,1250,1500,2000,'Yes','Yes','Yes','Yes','Any','Sewers','Anytime','Hard','No',FALSE),
+('Octopus',150,150,187,225,300,'No','Yes','No','No','Any','Ocean','6 AM - 1 PM','Extreme','No',FALSE),
+('Perch',55,55,68,82,110,'No','No','No','Yes','Any','Mountain Lake, River','Anytime','Easy','No',FALSE),
+('Pike',100,100,125,150,200,'No','Yes','No','Yes','Any','River','Anytime','Hard','No',FALSE),
+('Pufferfish',200,200,250,300,400,'No','Yes','No','No','Sunny','Ocean','12 PM - 4 PM','Hard','Specialty Fish Bundle',FALSE),
+('Rainbow Trout',65,65,81,97,130,'No','Yes','No','No','Sunny','Mountain Lake, River','6 AM - 7 PM','Medium','No',FALSE),
+('Red Mullet',75,75,93,112,150,'No','Yes','No','Yes','Any','Ocean','6 AM - 7 PM','Medium','No',FALSE),
+('Red Snapper',50,50,62,75,100,'No','Yes','Yes','No','Rainy','Ocean','6 AM - 7 PM','Easy','Ocean Fish Bundle',FALSE),
+('Salmon',75,75,93,112,150,'No','No','Yes','Yes','Any','River','6 AM - 7 PM','Medium','No',FALSE),
+('Sandfish',75,75,93,112,150,'Yes','Yes','Yes','Yes','Any','Desert','6 AM - 8 PM','Hard','Specialty Fish Bundle',FALSE),
+('Sardine',40,40,50,60,80,'Yes','No','Yes','Yes','Any','Ocean','6 AM - 7 PM','Easy','Ocean Fish Bundle',FALSE),
+('Scorpion Carp',150,150,187,225,300,'Yes','Yes','Yes','Yes','Any','Desert','6 AM - 8 PM','Extreme','No',FALSE),
+('Sea Cucumber',75,75,93,112,150,'No','No','Yes','Yes','Any','Ocean','6 AM - 7 PM','Easy','No',FALSE),
+('Shad',60,60,75,90,120,'Yes','Yes','Yes','No','Rainy','River','9 AM - 2 AM','Medium','River Fish Bundle',FALSE),
+('Slimejack',100,100,125,150,200,'Yes','Yes','Yes','No','Any','Mutant Bug Lair','Anytime','Medium','No',FALSE),
+('Smallmouth Bass',50,50,62,75,100,'Yes','No','Yes','No','Any','Town River, Forest Pond','Anytime','Very Easy','No',FALSE),
+('Spook Fish',220,220,275,330,440,'No','No','No','Yes','Any','Night Market','5 PM - 2 AM','Hard','No',FALSE),
+('Squid',80,80,100,120,160,'No','No','No','Yes','Any','Ocean','6 PM - 2 AM','Very Hard','No',FALSE),
+('Stingray',180,180,225,270,360,'Yes','Yes','Yes','Yes','Any','Ginger Island','Anytime','Hard','No',FALSE),
+('Stonefish',300,300,375,450,600,'Yes','Yes','Yes','Yes','Any','Mines','Anytime','Hard','No',FALSE),
+('Sturgeon',200,200,250,300,400,'No','Yes','No','Yes','Any','Mountain Lake','6 AM - 7 PM','Very Hard','Lake Fish Bundle',FALSE),
+('Sunfish',30,30,37,45,60,'Yes','Yes','No','No','Sunny','River','6 AM - 7 PM','Easy','River Fish Bundle',FALSE),
+('Super Cucumber',250,250,312,375,500,'No','Yes','Yes','No','Any','Ocean','6 PM - 2 AM','Very Hard','No',FALSE),
+('Tiger Trout',150,150,187,225,300,'No','No','Yes','Yes','Any','River','6 AM - 7 PM','Hard','River Fish Bundle',FALSE),
+('Tilapia',75,75,93,112,150,'No','Yes','Yes','No','Any','Ocean','6 AM - 2 PM','Medium','Ocean Fish Bundle',FALSE),
+('Tuna',100,100,125,150,200,'No','Yes','No','Yes','Any','Ocean','6 AM - 2 PM','Hard','Ocean Fish Bundle',FALSE),
+('Void Salmon',150,150,187,225,300,'Yes','Yes','Yes','Yes','Any','Witch''s Swamp','Anytime','Very Hard','No',FALSE),
+('Walleye',105,105,131,157,210,'No','No','Yes','No','Rainy','Mountain Lake, River','12 PM - 2 AM','Medium','Night Fishing Bundle',FALSE),
+('Woodskip',75,75,93,112,150,'Yes','Yes','Yes','Yes','Any','Secret Woods','Anytime','Medium','Specialty Fish Bundle',FALSE);"""
+    cursor_obj.execute(table)
+    connection_obj.commit()
+    cursor_obj.execute(insert)
+    connection_obj.commit()
+    return cursor_obj, connection_obj
 
 data()
