@@ -34,13 +34,13 @@ intents = nextcord.Intents.all()
 client = commands.Bot(command_prefix="r!", intents=intents, activity=nextcord.Game(name=' Nothing'))
 client.remove_command('help')
 
-# @client.event
-# async def on_command_error(ctx, error):
-#     await ctx.send(f"```Error flagged: {error}```")
+@client.event
+async def on_command_error(ctx, error):
+    await ctx.send(f"```Error flagged: {error}```")
 
-# @client.event
-# async def on_application_command_error(ctx, error):
-#     await ctx.send(f"```Error flagged: {error}```")
+@client.event
+async def on_application_command_error(ctx, error):
+    await ctx.send(f"```Error flagged: {error}```")
 
 async def my_autocomplete(ctx, option: str):
     all_options = ['Amaranth','Amethyst','Aquamarine','Artichoke Dip',"Autumn's Bounty",'Baked Fish','Banana Pudding','Battery Pack','Bean Hotpot','Beer','Beet','Blackberry Cobbler','Blueberry','Blueberry Tart','Cactus Fruit','Carp Surprise','Catfish','Cauliflower','Cave Carrot','Chanterelle','Cheese Cauliflower','Chocolate Cake','Chowder','Clay','Cloth','Coconut','Coffee','Common Mushroom','Complete Breakfast', 'Copper Bar', 'Crab Cakes', 'Cranberry Candy', 'Crispy Bass', 'Crocus', 'Daffodil', 'Dandelion', 'Diamond', "Dish O' The Sea", 'Dragon Tooth', 'Driftwood', 'Duck Egg', 'Duck Feather', 'Eggplant Parmesan', 'Emerald', 'Escargot', 'Fairy Rose', "Farmer's Lunch", 'Fiddlehead Risotto', 'Fish Stew', 'Fish Taco', 'Flounder', 'Fried Calamari', 'Fried Eel', 'Fried Mushroom', 'Frozen Tear', 'Fruit Salad', 'Ginger', 'Ginger Ale', 'Glazed Yams', 'Goat Cheese', 'Goat Milk', 'Gold Bar', 'Grape', 'Green Tea', 'Hazelnut', 'Holly', 'Hot Pepper', 'Ice Cream', 'Iridium Bar', 'Jade', 'Jelly', 'Joja Cola', 'Large Goat Milk', 'Leek', 'Lemon Stone', 'Lingcod', 'Lobster', 'Lobster Bisque', 'Magma Cap', 'Mango', 'Mango Sticky Rice', 'Maple Bar', 'Mead', 'Melon', "Miner's Treat", 'Morel', 'Nautilus Shell', 'Oak Resin', 'Obsidian', 'Octopus', 'Omni Geode', 'Orange', 'Ostrich Egg', 'Pale Ale', 'Pancakes', 'Parsnip Soup', 'Peach', 'Pepper Poppers', 'Pickles', 'Piña Colada', 'Pine Tar', 'Pink Cake', 'Pizza', 'Plum Pudding', 'Poi', 'Pomegranate', 'Poppy', 'Poppyseed Muffin', 'Pufferfish', 'Pumpkin', 'Pumpkin Pie', 'Pumpkin Soup', 'Purple Mushroom', 'Quartz', 'Radioactive Bar', 'Radioactive Ore', 'Rainbow Shell', 'Red Plate', 'Rhubarb Pie', 'Rice Pudding', 'Roasted Hazelnuts', 'Roots Platter', 'Ruby', 'Salad', 'Salmon Dinner', 'Sandfish', 'Sashimi', 'Sea Cucumber', 'Sea Urchin', 'Seafoam Pudding', 'Snail', 'Snow Yam', 'Solar Essence', 'Spaghetti', 'Spice Berry', 'Spicy Eel', 'Squid', 'Squid Ink', 'Stir Fry', 'Strawberry', 'Stuffing', 'Sturgeon', 'Sugar', 'Summer Spangle', 'Sunflower', 'Super Cucumber', 'Super Meal', 'Survival Burger', 'Sweet Pea', 'Tea Leaves', 'Tiger Trout', 'Tigerseye', 'Tom Kha Soup', 'Topaz', 'Tropical Curry', 'Trout Soup', 'Truffle', 'Truffle Oil', 'Tulip', 'Vegetable Medley', 'Void Egg', 'Void Essence', 'Void Mayonnaise', 'Wild Horseradish', 'Wine', 'Winter Root', 'Wool', 'Yam']  # Your full list
@@ -73,11 +73,10 @@ async def timers(current_song_length, timer):
         timer += 1
         await asyncio.sleep(1)
 
-async def play_song(song_count):
+async def play_song(song):
     global current_song
     global timer
-    song_count += 1
-    current_song = track1[song_count]
+    current_song = song
     current_song_length = int(round(MP3(current_song).info.length))
     await client.change_presence(activity=nextcord.Activity(type=nextcord.ActivityType.playing, name=SONGNAMES[SONGS.index(current_song.replace("./assets/soundtrack/", ""))]))
     voice_client=[]
@@ -99,11 +98,9 @@ async def play_song(song_count):
     except asyncio.CancelledError:
         pass
 
-    return song_count
-
-async def loop(track_1, song_count, current_song):
-    while song_count < len(track_1) - 1 and datetime.datetime.now(tz).hour < 21:
-        song_count = await play_song(song_count)
+async def loop():
+    while True:
+        await play_song(f"./assets/soundtrack/{random.choice(SONGS)}")
 
 async def joinup(ctx):
     channel = ctx.author.voice.channel
@@ -131,100 +128,27 @@ def cleartrims():
         except Exception as e:
             print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'red')} Failed to delete {file_path}. Reason: {e}")
 
+async def play():
+    global current_song
+    task = asyncio.create_task(loop())
+    try:
+        await task
+    except asyncio.CancelledError:
+        task.cancel()
+    current_song = ""
+
 @client.event
 async def on_ready():
     print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Broadcasting as {client.user.name}")
     client.add_cog(DailyAction(client))
     global current_song
     current_song = ""
+    await play()
 
 class DailyAction(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.generate_programming.start()
-        self.play.start()
         self.clear.start()
-        self.stop.start()
-
-    @tasks.loop(time=checktime(16, 39, 00, tzinfo=tz))
-    async def generate_programming(self):
-        total_time = 0
-        track_1 = []
-        track_2 = []
-        track_3 = []
-        times = []
-
-        # morning = nextcord.FFmpegPCMAudio(source = f"./assets/overlays/morning_{random.randint(1, 2)}.wav")
-        # morning_length = int(round(WAVE(f"./assets/overlays/morning_{random.randint(1, 2)}.wav").info.length, 3) * 1000)
-        # track_2.append(morning)
-        # track_1.append(morning_length)
-        # total_time += morning_length
-        recent_songs = []
-        while total_time < 46800:
-            num = random.randint(0,99)
-            while num in recent_songs:
-                num = random.randint(0,99)
-            recent_songs.append(num)
-            if len(recent_songs) > 10:
-                recent_songs.pop(0)
-            song = f"./assets/soundtrack/{SONGS[num]}"
-            song_length = int(round(MP3(f"./assets/soundtrack/{SONGS[num]}").info.length))
-            if song_length <= 60:
-                song_length *= 4
-                track_1.extend([song, song, song, song])
-                times.extend([total_time, total_time, total_time, total_time])
-            elif song_length <= 100:
-                song_length *= 2
-                track_1.extend([song, song])
-                times.extend([total_time, total_time])
-            else:
-                track_1.append(song)
-                times.append(total_time)
-            track_2.append(song_length)
-            total_time += song_length
-        global track1 
-        track1 = track_1
-        global track2
-        track2 = track_2
-        global track3 
-        track3 = track_3
-        global programs
-        programs = times
-        global total_program
-        total_program = total_time
-        print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Programming generated, going live in {datetime.datetime(int(datetime.datetime.now(tz).year), int(datetime.datetime.now(tz).month), int(datetime.datetime.now(tz).day), 8,00,0,tzinfo=tz) - datetime.datetime.now(tz).replace(microsecond=0)}")
-        return track_1, track_2, track_3, times, total_time
-
-    @tasks.loop(time=checktime(16, 40, 0, tzinfo=tz))
-    async def play(self):
-        global current_song
-        song_count = -1
-        current_song_length = int(round(MP3(track1[song_count]).info.length))
-        print(f'{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ":", "green")} Starting daily broadcast')
-        task = asyncio.create_task(loop(track1, song_count, current_song_length))
-        self.loop = task
-        try:
-            await task
-        except asyncio.CancelledError:
-            task.cancel()
-        current_song = ""
-
-    @tasks.loop(time=checktime(21, 00, 0, tzinfo=tz))
-    async def stop(self):
-        self.loop.cancel()
-        voice_client=[]
-        for guild in client.guilds:
-            if not get(client.voice_clients, guild=guild):
-                continue
-            voice_client.append(get(client.voice_clients, guild=guild))
-
-        for i in voice_client:
-            i.stop()
-        sys.stdout.write('\033[2K\033[1G')
-        print(f'{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ":", "green")} Terminating daily broadcast')
-        await client.change_presence(activity=nextcord.Activity(type=nextcord.ActivityType.playing, name="Nothing"))
-        current_song = ""
-        tz = timezone(datetime.timedelta(hours=-5) + datetime.datetime.now(tzpy).dst())
 
     @tasks.loop(minutes=30)
     async def clear(self):

@@ -1,9 +1,7 @@
 TODO:
 - Add tips:
-    - Add more item data
+    - Add more item data (missing items(?))
     - Figure out embeds
     - Add non-bachelors
-- Rework Radio
-    - Remove live element
-    - Just make it play
+    - Match format for character data to item data & add birthday
 - Publish
