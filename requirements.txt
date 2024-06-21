@@ -2,5 +2,4 @@ nextcord==2.6.0
 ffmpeg-python==0.2.0
 python-dotenv==1.0.1
 mutagen==1.47.0
-pytz==2024.1
 string-color==1.2.3
