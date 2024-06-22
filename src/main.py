@@ -345,18 +345,19 @@ async def characters(ctx: nextcord.Interaction, character: str = nextcord.SlashO
     await ctx.send(embed=embed)
 
 @client.slash_command(description="Shows this message.", guild_ids=[1244302066600640613])
-async def help(ctx, command: str = nextcord.SlashOption(name="command", description="The bot's commands or categories", choices=["Home", "Radio Control", "Setup", "Tips", "mute", "volume", "join", "leave", "characters", "items" "help"])):
+async def help(ctx, command: str = nextcord.SlashOption(name="command", description="The bot's commands or categories", choices=["Home", "Radio Control", "Setup", "Tips", "help", "mute", "volume", "join", "leave", "characters", "items", "fish"])):
     if command == "Home":
         await ctx.send('''
 ```Radio Control:
-  mute   Sets the radio volume to zero.
-  volume Changes the volume of the radio.
+  r!mute   Sets the radio volume to zero.
+  r!volume Changes the volume of the radio.
 Setup:
-  join   Connects the bot to a voice channel.
-  leave  Disconnects the bot from a voice channel.
+  r!join   Connects the bot to a voice channel.
+  r!leave  Disconnects the bot from a voice channel.
 Tips:
   /characters Shows you a character's gift chart.
-  /items Shows you an item's gift chart.
+  /items      Shows you an item's gift chart.
+  /fish       Shows you a fish's data chart
 Other:
   /help  Shows this message.
 
@@ -397,7 +398,7 @@ Changes the volume of the radio.```
 
 Shows you an item's gift chart.```
 ''')
-    elif command == "items":
+    elif command == "fish":
         await ctx.send('''
 ```/fish <fish>
 
