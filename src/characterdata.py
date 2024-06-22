@@ -724,29 +724,97 @@ Survival Burger
 Topaz
 Wool``'''
 
-class Like(ui.Select):
-    def __init__(self, character):
-        self.character=character
-        options = [
-            nextcord.SelectOption(label="Love", description="+80 Friendship Points", emoji="❤️"),
-            nextcord.SelectOption(label="Like", description="+45 Friendship Points", emoji="👍"),
-            nextcord.SelectOption(label="Neutral", description="+20 Friendship Points", emoji="🤷"),
-            nextcord.SelectOption(label="Dislike", description="-20 Friendship Points", emoji="👎"),
-            nextcord.SelectOption(label="Hate", description="-40 Friendship Points", emoji="💔"),
-        ]
-        super().__init__(placeholder="`Choose fields.`", options=options, min_values=1, max_values=5)
+class Caroline:
+    def __init__(self):
+        self.Hate = '''```diff\n\n
+All Universal Hates
+Quartz
+Salmonberry```'''
+        self.Dislike = '''```diff\n\n
+All Universal Dislikes
+Amaranth
+Chanterelle
+Common Mushroom
+Dandelion
+Duck Mayonnaise
+Ginger
+Hazelnut
+Holly
+Leek
+Magma Cap
+Mayonnaise
+Morel
+Purple Mushroom
+Snow Yam
+Winter Root```'''
+        self.Neutral = '''```\n
+All Universal Neutrals (except Tea Leaves)
+All Eggs (except Void Egg)*
+All Fruit (except pre-1.5 Fruit Tree Fruit & Salmonberry)
+All Milk
 
-    async def callback(self, interaction):
-        result = [f'```{self.character}:```']
-        results = ""
-        for i in self.values:
-            result.append(eval(f"{self.character}().{i}"))
-        for i in self.values:
-            results += eval(f"{self.character}().{i}")
-        if len(results) < 2000:
-            await interaction.response.send_message(results)
-        else:
-            await interaction.response.send_message(result[0])
-            result.pop(0)
-            for i in result:
-                await interaction.followup.send(content=i)
+*Dinosaur Eggs do not count as eggs, but artifacts.```'''
+        self.Like = '''```diff\n
+All Universal Likes (except Amaranth, Duck Mayonnaise, & Mayonnaise)
+Daffodil
+Tea Leaves
+Wild Horseradish```'''
+        self.Love = '''```diff\n\n
+All Universal Loves
+Fish Taco
+Green Tea
+Summer Spangle
+Tropical Curry``'''
+
+class Clint:
+    def __init__(self):
+        self.Hate = '''```diff\n\n
+All Universal Hates
+Holly```'''
+        self.Dislike = '''```diff\n\n
+All Universal Dislikes (except Coal, Copper Bar, Gold Bar, Gold Ore, Iridium Bar, Iridium Ore, Iron Bar, Omni Geode, & Refined Quartz)
+All Flowers (except Poppy)
+Quartz
+Salmonberry
+Wild Horseradish```'''
+        self.Neutral = '''```\n
+All Universal Neutrals (except Mining Monthly)
+All Eggs (except Void Egg)*
+All Fruit (except Fruit Tree Fruit & Salmonberry)
+All Milk
+Chanterelle
+Common Mushroom
+Coal
+Daffodil
+Dandelion
+Ginger
+Gold Ore
+Hazelnut
+Iridium Ore
+Leek
+Magma Cap
+Morel
+Purple Mushroom
+Refined Quartz
+Snow Yam
+Winter Root
+
+*Dinosaur Eggs do not count as eggs, but artifacts.```'''
+        self.Like = '''```diff\n
+All Universal Likes (except Flowers)
+Copper Bar
+Iron Bar
+Mining Monthly```'''
+        self.Love = '''```diff\n\n
+All Universal Loves
+Amethyst
+Aquamarine
+Artichoke Dip
+Emerald
+Fiddlehead Risotto
+Gold Bar
+Iridium Bar
+Jade
+Omni Geode
+Ruby
+Topaz``'''

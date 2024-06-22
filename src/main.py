@@ -85,7 +85,7 @@ async def play_song(song):
     global timer
     current_song = song
     current_song_length = int(round(MP3(current_song).info.length))
-    await client.change_presence(activity=nextcord.Activity(type=nextcord.ActivityType.playing, name=SONGNAMES[SONGS.index(current_song.replace("./assets/soundtrack/", ""))]))
+    await client.change_presence(activity=nextcord.Activity(type=nextcord.ActivityType.playing, name=SONGNAMES[SONGS.index(current_song.replace("./assets/audio/", ""))]))
     voice_client=[]
     for guild in client.guilds:
         if not get(client.voice_clients, guild=guild):
@@ -95,7 +95,7 @@ async def play_song(song):
     for i in voice_client:
         i.stop()
         i.play(nextcord.FFmpegPCMAudio(current_song))
-    print(f'{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ":", "green")} Playing {SONGNAMES[SONGS.index(current_song.replace("./assets/soundtrack/", ""))]} for {datetime.timedelta(seconds=current_song_length)}')
+    print(f'{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ":", "green")} Playing {SONGNAMES[SONGS.index(current_song.replace("./assets/audio/", ""))]} for {datetime.timedelta(seconds=current_song_length)}')
     global timer
     timer = 0
     current_song_length = int(round(MP3(current_song).info.length))
@@ -107,7 +107,7 @@ async def play_song(song):
 
 async def loop():
     while True:
-        await play_song(f"./assets/soundtrack/{random.choice(SONGS)}")
+        await play_song(f"./assets/audio/{random.choice(SONGS)}")
 
 async def joinup(ctx):
     channel = ctx.author.voice.channel
@@ -315,7 +315,7 @@ async def leave(ctx):
         await ctx.channel.send("```There is no channel to tune out of.```")
 
 @client.slash_command(description="Shows you a character's gift chart.", guild_ids=[1244302066600640613])
-async def characters(ctx: nextcord.Interaction, character: str = nextcord.SlashOption(name="character", description="A character to choose from", choices=["Universal", "Alex", "Elliot", "Harvey", "Sam", "Sebastian", "Shane", "Abigail", "Haley", "Leah", "Maru", "Penny", "Emily"])):
+async def characters(ctx: nextcord.Interaction, character: str = nextcord.SlashOption(name="character", description="A character to choose from", choices=["Universal", "Alex", "Elliot", "Harvey", "Sam", "Caroline", "Clint", "Sebastian", "Shane", "Abigail", "Haley", "Leah", "Maru", "Penny", "Emily"])):
     Neutral = eval(f"characterdata.{character}().Neutral")
     Dislike = eval(f"characterdata.{character}().Dislike")
     count1 = Neutral.count("\n")
