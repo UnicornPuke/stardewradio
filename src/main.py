@@ -312,7 +312,6 @@ async def join(ctx):
             
 @client.command(aliases=["tuneout", "disconnect"], description= "Disconnects the bot from a voice channel.")
 async def leave(ctx):
-    cursor_obj.close()
     if ctx.guild.voice_client:
         await ctx.guild.voice_client.disconnect()
         await ctx.channel.send("```Leaving...```")
@@ -431,6 +430,7 @@ Shows this message.```
         
 @client.event
 async def on_close():
+    cursor_obj.close()
     voice_client=[]
     for guild in client.guilds:
         if not get(client.voice_clients, guild=guild):
