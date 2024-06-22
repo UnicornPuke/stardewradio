@@ -224,7 +224,7 @@ def data():
         cursor_obj.execute(i)
         connection_obj.commit()
     table = '''CREATE TABLE [fish] (
-  [Stardew ValleyFish Guide (1.6.7)] TEXT,
+  [Fish] TEXT,
   [Base Price] INT,
   [Price] INT,
   [] INT,
@@ -242,7 +242,7 @@ def data():
   [Caught?] INT
 );'''
 
-    insert='''INSERT INTO [fish] ([Stardew ValleyFish Guide (1.6.7)],[Base Price],[Price],[],[_2],[_3],[Spring],[Summer],[Fall],[Winter],[Weather],[Location],[Time],[Difficulty],[Bundle],[Caught?])
+    insert='''INSERT INTO [fish] ([Fish],[Base Price],[Price],[],[_2],[_3],[Spring],[Summer],[Fall],[Winter],[Weather],[Location],[Time],[Difficulty],[Bundle],[Caught?])
 VALUES
 ('Albacore',75,75,93,112,150,'No','No','Yes','Yes','Any','Ocean','6 AM - 11 AM
 6 PM - 2 AM','Hard','No',FALSE),

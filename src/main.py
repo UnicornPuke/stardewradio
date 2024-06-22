@@ -33,6 +33,11 @@ intents = nextcord.Intents.all()
 client = commands.Bot(command_prefix="r!", intents=intents, activity=nextcord.Game(name=' Nothing'))
 client.remove_command('help')
 
+guild_ids=[]
+
+for i in client.guilds:
+    guild_ids.app
+
 @client.event
 async def on_command_error(ctx, error):
     await ctx.send(f"```Error flagged: {error}```")
@@ -183,7 +188,7 @@ async def volume(ctx, new_volume=None):
     else:
         await ctx.channel.send('```Please enter a number between 0 and 100.```')
 
-@client.slash_command(description="Shows you an item's data",guild_ids=[1244302066600640613])
+@client.slash_command(description="Shows you an item's data")
 async def items(ctx: nextcord.Interaction, item: str = nextcord.SlashOption(autocomplete_callback=my_autocomplete)):
     people = ['Abigail',	'Alex',	'Caroline',	'Clint',	'Demetrius',	'Dwarf',	'Elliott',	'Emily',	'Evelyn',	'George',	'Gus',	'Haley',	'Harvey',	'Jas',	'Jodi',	'Kent',	'Krobus',	'Leah',	'Leo',	'Lewis',	'Linus',	'Marnie',	'Maru',	'Pam',	'Penny',	'Pierre',	'Robin',	'Sam',	'Sandy',	'Sebastian',	'Shane',	'Vincent',	'Willy',	'Wizard',]
     cursor_obj.execute("SELECT [%s] FROM [cooltable]" % item) 
@@ -255,7 +260,7 @@ async def items(ctx: nextcord.Interaction, item: str = nextcord.SlashOption(auto
     embed.add_field(name="Hates", value=Hate, inline= False)
     await ctx.send(embed=embed)
 
-@client.slash_command(description="Shows you an item's data",guild_ids=[1244302066600640613])
+@client.slash_command(description="Shows you an item's data")
 async def fish(ctx: nextcord.Interaction, fish: str = nextcord.SlashOption(autocomplete_callback=my_autocomplete2)):
     cursor_obj.execute("SELECT * FROM [fish] where Fish = '%s'" % fish) 
     liked = cursor_obj.fetchall()[0]
@@ -314,7 +319,7 @@ async def leave(ctx):
     else:
         await ctx.channel.send("```There is no channel to tune out of.```")
 
-@client.slash_command(description="Shows you a character's gift chart.", guild_ids=[1244302066600640613])
+@client.slash_command(description="Shows you a character's gift chart.")
 async def characters(ctx: nextcord.Interaction, character: str = nextcord.SlashOption(name="character", description="A character to choose from", choices=["Universal", "Alex", "Elliot", "Harvey", "Sam", "Sebastian", "Shane", "Abigail", "Haley", "Leah", "Maru", "Penny", "Emily"])):
     Neutral = eval(f"characterdata.{character}().Neutral")
     Dislike = eval(f"characterdata.{character}().Dislike")
@@ -344,7 +349,7 @@ async def characters(ctx: nextcord.Interaction, character: str = nextcord.SlashO
 
     await ctx.send(embed=embed)
 
-@client.slash_command(description="Shows this message.", guild_ids=[1244302066600640613])
+@client.slash_command(description="Shows this message.")
 async def help(ctx, command: str = nextcord.SlashOption(name="command", description="The bot's commands or categories", choices=["Home", "Radio Control", "Setup", "Tips", "mute", "volume", "join", "leave", "characters", "items" "help"])):
     if command == "Home":
         await ctx.send('''
