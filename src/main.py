@@ -116,15 +116,15 @@ async def joinup(ctx):
         rand = random.randint(0, 100000)
         audio_input = ffmpeg.input(current_song)
         audio_cut = audio_input.audio.filter('atrim', start=timer)
-        audio_output = ffmpeg.output(audio_cut, f'./assets/trims/out{rand}.mp3', loglevel="quiet")
+        audio_output = ffmpeg.output(audio_cut, f'./assets/out/out{rand}.mp3', loglevel="quiet")
         ffmpeg.run(audio_output)
-        vc.play(nextcord.FFmpegPCMAudio(f'./assets/trims/out{rand}.mp3'))
-        return f'./assets/trims/out{rand}.mp3'
+        vc.play(nextcord.FFmpegPCMAudio(f'./assets/out/out{rand}.mp3'))
+        return f'./assets/out/out{rand}.mp3'
     return None
 
-def cleartrims():
-    print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Cleared ./assets/trims contents")
-    folder = './assets/trims'
+def clearout():
+    print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Cleared ./assets/out contents")
+    folder = './assets/out'
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         try:
@@ -159,7 +159,7 @@ class DailyAction(commands.Cog):
 
     @tasks.loop(minutes=30)
     async def clear(self):
-        cleartrims()
+        clearout()
 
 @client.command(aliases=["changevolume"], description= "Changes the volume of the radio.")
 async def volume(ctx, new_volume=None):
@@ -315,7 +315,7 @@ async def leave(ctx):
         await ctx.channel.send("```There is no channel to tune out of.```")
 
 @client.slash_command(description="Shows you a character's gift chart.", guild_ids=[1244302066600640613])
-async def characters(ctx: nextcord.Interaction, character: str = nextcord.SlashOption(name="character", description="A character to choose from", choices=["Universal", "Alex", "Elliot", "Harvey", "Sam", "Caroline", "Clint", "Dwarf", "Demetrius", "Sebastian", "Shane", "Abigail", "Haley", "Leah", "Maru", "Penny", "Emily"])):
+async def characters(ctx: nextcord.Interaction, character: str = nextcord.SlashOption(name="character", description="A character to choose from", choices=["Universal", "Abigail", "Alex", "Caroline", "Clint", "Dwarf", "Demetrius", "Elliot", "Emily", "Evelyn", "George", "Gus", "Harvey", "Sam", "Sebastian", "Shane", "Haley", "Leah", "Maru", "Penny"])):
     Neutral = eval(f"characterdata.{character}().Neutral")
     Dislike = eval(f"characterdata.{character}().Dislike")
     count1 = Neutral.count("\n")
