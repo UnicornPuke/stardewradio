@@ -999,8 +999,7 @@ Daffodil```'''
         self.Love = '''```\n\n
 All Universal Loves
 Fried Mushroom
-Leek```'''
-
+Leek``'''
 
 class Gus:
     def __init__(self):
@@ -1041,4 +1040,180 @@ Diamond
 Escargot
 Fish Taco
 Orange
-Tropical Curry```'''
+Tropical Curry``'''
+
+class Jas:
+    def __init__(self):
+        self.Hate = '''```\n\n
+All Universal Hates
+All Artisan Goods (except Honey, Jelly & Oil)
+Clay
+Piña Colada
+Triple Shot Espresso
+Wild Horseradish```'''
+        self.Dislike = '''```\n\n
+All Universal Dislikes (except Ancient Doll, Clay, Fairy Box, Strange Doll (green), & Strange Doll (yellow))
+All Eggs*
+All Fruit (except Coconut & Fruit Tree Fruit)
+All Vegetables (except Hops & Wheat)
+Chanterelle
+Common Mushroom
+Dandelion
+Ginger
+Hazelnut
+Holly
+Leek
+Magma Cap
+Morel
+Purple Mushroom
+Quartz
+Snow Yam
+Winter Root
+
+*Dinosaur Eggs do not count as eggs, but artifacts.```'''
+        self.Neutral = '''```\n
+All Universal Neutrals```'''
+        self.Like = '''```\n
+All Universal Likes (except Piña Colada, Triple Shot Espresso, Vegetables and Artisan Goods other than Honey, Jelly, & Oil)
+All Milk
+Coconut
+Daffodil```'''
+        self.Love = '''```\n\n
+All Universal Loves
+Ancient Doll
+Fairy Box
+Fairy Rose
+Pink Cake
+Plum Pudding
+Strange Doll (green)
+Strange Doll (yellow)``'''
+
+class Jodi:
+    def __init__(self):
+        self.Hate = '''```\n\n
+All Universal Hates
+Daffodil
+Dandelion
+Spice Berry```'''
+        self.Dislike = '''```\n\n
+All Universal Dislikes
+Chanterelle
+Common Mushroom
+Garlic
+Ginger
+Hazelnut
+Holly
+Leek
+Magma Cap
+Morel
+Purple Mushroom
+Quartz
+Snow Yam
+Wild Horseradish
+Winter Root```'''
+        self.Neutral = '''```\n
+All Universal Neutrals```'''
+        self.Like = '''```\n
+All Universal Likes (except Garlic)
+All Eggs (except Void Egg)*
+All Fruit (except Spice Berry)
+All Milk
+
+*Dinosaur Eggs do not count as eggs, but artifacts.```'''
+        self.Love = '''```\n\n
+	
+All Universal Loves
+Chocolate Cake
+Crispy Bass
+Diamond
+Eggplant Parmesan
+Fried Eel
+Pancakes
+Rhubarb Pie
+Vegetable Medley``'''
+
+class Kent:
+    def __init__(self):
+        self.Hate = '''```\n\n
+All Universal Hates
+All Milk
+Algae Soup
+Holly
+Sashimi
+Tortilla```'''
+        self.Dislike = '''```\n\n
+All Universal Dislikes
+Piña Colada
+Quartz
+Snow Yam```'''
+        self.Neutral = '''```\n
+All Universal Neutrals (except Dwarvish Safety Manual)
+Chanterelle
+Common Mushroom
+Dandelion
+Ginger
+Hazelnut
+Leek
+Magma Cap
+Morel
+Purple Mushroom
+Wild Horseradish
+Winter Root```'''
+        self.Like = '''```\n
+All Universal Likes (except Algae Soup, Piña Colada, Sashimi, & Tortilla)
+All Eggs (except Void Egg)*
+All Fruit
+Daffodil
+Dwarvish Safety Manual
+
+*Dinosaur Eggs do not count as eggs, but artifacts.```'''
+        self.Love = '''```\n\n
+All Universal Loves
+Fiddlehead Risotto
+Roasted Hazelnuts``'''
+
+class Krobus:
+    def __init__(self):
+        self.Hate = '''```\n\n
+All Universal Hates (except Monster Musk, Seafoam Pudding, Strange Bun, & Void Mayonnaise)```'''
+        self.Dislike = '''```\n\n
+All Universal Dislikes (except Gold Bar, Iridium Bar, & Void Egg)
+All Cooking (except Bread, Fried Egg, Seafoam Pudding, & Strange Bun)
+Chanterelle
+Common Mushroom
+Daffodil
+Dandelion
+Ginger
+Hazelnut
+Holly
+Leek
+Life Elixir
+Magma Cap
+Morel
+Purple Mushroom
+Salmonberry
+Snow Yam
+Winter Root```'''
+        self.Neutral = '''```\n
+All Universal Neutrals (except Monster Compendium)
+All Eggs (except Void Egg)*
+All Fruit (except Fruit Tree Fruit & Salmonberry)
+All Milk
+
+*Dinosaur Eggs do not count as eggs, but artifacts.```'''
+        self.Like = '''```\n
+All Universal Likes (except Life Elixir and All Cooking excluding Seafoam Pudding & Strange Bun)
+Gold Bar
+Quartz
+Seafoam Pudding
+Strange Bun```'''
+        self.Love = '''```\n\n
+All Universal Loves
+Diamond
+Iridium Bar
+Monster Compendium
+Monster Musk
+Pumpkin
+Void Egg
+Void Mayonnaise
+Wild Horseradish``'''
