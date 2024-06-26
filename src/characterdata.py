@@ -818,3 +818,89 @@ Jade
 Omni Geode
 Ruby
 Topaz``'''
+
+class Demetrius:
+    def __init__(self):
+        self.Hate = '''```diff\n\n
+All Universal Hates
+Holly```'''
+        self.Dislike = '''```diff\n\n
+All Universal Dislikes (except Dinosaur Egg & Fish)
+Quartz```'''
+        self.Neutral = '''```\n
+All Universal Neutrals
+All Fish (except Carp & Snail)
+All Milk
+Chanterelle
+Common Mushroom
+Daffodil
+Dandelion
+Ginger
+Hazelnut
+Leek
+Magma Cap
+Morel
+Snow Yam
+Wild Horseradish
+Winter Root```'''
+        self.Like = '''```diff\n
+All Universal Likes
+All Eggs (except Void Egg)*
+All Fruit (except Strawberry)
+Dinosaur Egg
+Purple Mushroom
+
+*Dinosaur Eggs do not count as eggs, but artifacts.```'''
+        self.Love = '''```diff\n\n
+All Universal Loves
+Bean Hotpot
+Ice Cream
+Rice Pudding
+Strawberry``'''
+
+class Dwarf:
+    def __init__(self):
+        self.Hate = '''```diff\n\n
+All Universal Hates```'''
+        self.Dislike = '''```diff\n\n
+All Universal Dislikes (except Artifacts, Cave Carrot, Lava Eel, Lemon Stone, Omni Geode, Solar Essence, & Void Essence)
+All Eggs*
+Chanterelle
+Common Mushroom
+Daffodil
+Dandelion
+Ginger
+Hazelnut
+Holly
+Leek
+Magma Cap
+Morel
+Purple Mushroom
+Salmonberry
+Snow Yam
+Wild Horseradish
+Winter Root
+
+*Dinosaur Eggs do not count as eggs, but artifacts.```'''
+        self.Neutral = '''```\n
+All Universal Neutrals
+All Fruit (except Fruit Tree fruit & Salmonberry)
+All Milk
+Solar Essence
+Void Essence```'''
+        self.Like = '''```diff\n
+All Universal Likes
+All Artifacts
+Cave Carrot
+Quartz```'''
+        self.Love = '''```diff\n\n
+All Universal Loves
+Amethyst
+Aquamarine
+Emerald
+Jade
+Lava Eel
+Lemon Stone
+Omni Geode
+Ruby
+Topaz``'''
