@@ -315,7 +315,7 @@ async def leave(ctx):
         await ctx.channel.send("```There is no channel to tune out of.```")
 
 @client.slash_command(description="Shows you a character's gift chart.", guild_ids=[1244302066600640613])
-async def characters(ctx: nextcord.Interaction, character: str = nextcord.SlashOption(name="character", description="A character to choose from", choices=["Universal", "Abigail", "Alex", "Caroline", "Clint", "Dwarf", "Demetrius", "Elliot", "Emily", "Evelyn", "George", "Gus", "Harvey", "Jas", "Jodi", "Kent", "Krobus", "Leah", "Maru", "Penny", "Sam", "Sebastian", "Shane", "Haley"])):
+async def characters(ctx: nextcord.Interaction, character: str = nextcord.SlashOption(name="character", description="A character to choose from", choices=["Universal", "Abigail", "Alex", "Caroline", "Clint", "Dwarf", "Demetrius", "Elliot", "Emily", "Evelyn", "George", "Gus", "Harvey", "Jas", "Jodi", "Kent", "Krobus", "Leah", "Leo", "Lewis", "Linus", "Marnie", "Maru", "Pam", "Penny", "Pierre", "Robin", "Sam", "Sebastian", "Shane", "Haley"])):
     Neutral = eval(f"characterdata.{character}().Neutral")
     Dislike = eval(f"characterdata.{character}().Dislike")
     count1 = Neutral.count("\n")

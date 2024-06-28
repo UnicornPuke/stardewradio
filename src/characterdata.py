@@ -1397,3 +1397,126 @@ Diamond
 Farmer's Lunch
 Pink Cake
 Pumpkin Pie``'''
+
+class Pam:
+    def __init__(self):
+        self.Hate = '''```\n\n
+All Universal Hates
+Holly
+Octopus
+Squid```'''
+        self.Dislike = '''```\n\n
+All Universal Dislikes (except Fish)
+All Eggs*
+Quartz
+Wild Horseradish
+
+*Dinosaur Eggs do not count as eggs, but artifacts.```'''
+        self.Neutral = '''```\n
+All Universal Neutrals
+All Fish (except Carp, Octopus, Snail, & Squid)
+Chanterelle
+Common Mushroom
+Dandelion
+Ginger
+Hazelnut
+Leek
+Magma Cap
+Morel
+Purple Mushroom
+Snow Yam
+Winter Root```'''
+        self.Like = '''```\n
+All Universal Likes
+All Fruit (except Cactus Fruit)
+All Milk
+Daffodil```'''
+        self.Love = '''```\n\n
+All Universal Loves
+Beer
+Keg
+Cactus Fruit
+Glazed Yams
+Mead
+Pale Ale
+Parsnip
+Parsnip Soup
+Piña Colada``'''
+
+class Pierre:
+    def __init__(self):
+        self.Hate = '''```\n\n
+All Universal Hates
+All Fish
+Corn
+Garlic
+Parsnip Soup
+Tortilla```'''
+        self.Dislike = '''```\n\n
+All Universal Dislikes (except Fish)
+All Foraged Minerals
+All Gems (other than Diamond & Prismatic Shard)
+Chanterelle
+Common Mushroom
+Ginger
+Hazelnut
+Holly
+Leek
+Magma Cap
+Morel
+Salmonberry
+Purple Mushroom
+Snow Yam
+Wild Horseradish
+Winter Root```'''
+        self.Neutral = '''```\n
+All Universal Neutrals
+All Fruit (except Fruit Tree Fruit & Salmonberry)```'''
+        self.Like = '''```\n
+All Universal Likes (except Corn, Garlic, Foraged Minerals, Gems other than Diamond & Prismatic Shard, Parsnip Soup, & Tortilla)
+All Eggs (except Void Egg)*
+All Milk
+Daffodil
+Dandelion
+
+*Dinosaur Eggs do not count as eggs, but artifacts.```'''
+        self.Love = '''```\n\n
+All Universal Loves
+Fried Calamari``'''
+
+class Robin:
+    def __init__(self):
+        self.Hate = '''```\n\n
+All Universal Hates
+Holly```'''
+        self.Dislike = '''```\n\n
+All Universal Dislikes (except Hardwood)
+Wild Horseradish```'''
+        self.Neutral = '''```\n
+All Universal Neutrals
+All Eggs (except Void Egg)*
+Chanterelle
+Common Mushroom
+Daffodil
+Dandelion
+Ginger
+Hazelnut
+Leek
+Magma Cap
+Morel
+Purple Mushroom
+Snow Yam
+Winter Root
+
+*Dinosaur Eggs do not count as eggs, but artifacts.```'''
+        self.Like = '''```\n
+All Universal Likes
+All Milk
+All Fruit (except Peach)
+Hardwood
+Quartz```'''
+        self.Love = '''```\n\n
+All Universal Loves
+Goat Cheese
+Peach
+Spaghetti``'''
