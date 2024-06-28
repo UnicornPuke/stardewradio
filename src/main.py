@@ -51,6 +51,11 @@ async def my_autocomplete2(ctx, option: str):
     filtered_options = [i for i in all_options if i.lower().startswith(option.lower())]
     return filtered_options[:25]  # Slice to return only 25 options
 
+async def my_autocomplete3(ctx, option: str):
+    all_options = ["Universal", "Abigail", "Alex", "Caroline", "Clint", "Dwarf", "Demetrius", "Elliot", "Emily", "Evelyn", "George", "Gus", "Harvey", "Jas", "Jodi", "Kent", "Krobus", "Leah", "Leo", "Lewis", "Linus", "Marnie", "Maru", "Pam", "Penny", "Pierre", "Robin", "Sam", "Sebastian", "Shane", "Haley"]
+    filtered_options = [i for i in all_options if i.lower().startswith(option.lower())]
+    return filtered_options[:25]  # Slice to return only 25 options
+
 # Constants
 load_dotenv("env/.env")
 if sys.argv[1] == 'test':
@@ -315,7 +320,7 @@ async def leave(ctx):
         await ctx.channel.send("```There is no channel to tune out of.```")
 
 @client.slash_command(description="Shows you a character's gift chart.", guild_ids=[1244302066600640613])
-async def characters(ctx: nextcord.Interaction, character: str = nextcord.SlashOption(name="character", description="A character to choose from", choices=["Universal", "Abigail", "Alex", "Caroline", "Clint", "Dwarf", "Demetrius", "Elliot", "Emily", "Evelyn", "George", "Gus", "Harvey", "Jas", "Jodi", "Kent", "Krobus", "Leah", "Leo", "Lewis", "Linus", "Marnie", "Maru", "Pam", "Penny", "Pierre", "Robin", "Sam", "Sebastian", "Shane", "Haley"])):
+async def characters(ctx: nextcord.Interaction, character: str = nextcord.SlashOption(autocomplete_callback=my_autocomplete3)):
     Neutral = eval(f"characterdata.{character}().Neutral")
     Dislike = eval(f"characterdata.{character}().Dislike")
     count1 = Neutral.count("\n")
