@@ -304,10 +304,10 @@ async def join(ctx):
             await ctx.channel.send("```I am already in.```")
         else:
             await ctx.guild.voice_client.disconnect()
-            out = await joinup(ctx)
+            await joinup(ctx)
             await ctx.channel.send("```Joining...```")
     else:
-        out = await joinup(ctx)
+        await joinup(ctx)
         await ctx.channel.send("```Joining...```")
             
 @client.command(aliases=["tuneout", "disconnect"], description= "Disconnects the bot from a voice channel.")
@@ -346,6 +346,10 @@ async def characters(ctx: nextcord.Interaction, character: str = nextcord.SlashO
     embed.add_field(name="Neutral", value=Neutral)
     embed.add_field(name="Dislike", value=Dislike)
     embed.add_field(name="Hate", value=eval(f"characterdata.{character}().Hate"),inline=False)
+    if character != "Universal":
+        cursor_obj.execute("SELECT Birthday FROM [birthday] where People = '%s'" % character)
+        birthday = cursor_obj.fetchall()[0][0]
+        embed.add_field(name="Birthday", value=f"```{birthday}```",inline=False)
 
     await ctx.send(embed=embed)
 

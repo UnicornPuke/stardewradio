@@ -8,7 +8,50 @@ def data():
     cursor_obj = connection_obj.cursor()
 
     cursor_obj.execute("DROP TABLE IF EXISTS [cooltable]")
+    cursor_obj.execute("DROP TABLE IF EXISTS [birthday]")
     cursor_obj.execute("DROP TABLE IF EXISTS [fish]")
+
+
+    birthday = """CREATE TABLE [birthday] (
+  [People] TEXT,
+  [Birthday] TEXT
+);"""
+
+    birthdayi = """INSERT INTO [birthday] ([People],[Birthday])
+VALUES
+('Abigail','Fall 13'),
+('Alex','Summer 13'),
+('Caroline','Winter 7'),
+('Clint','Winter 26'),
+('Demetrius','Summer 19'),
+('Dwarf','Summer 22'),
+('Elliot','Fall 5'),
+('Emily','Spring 27'),
+('Evelyn','Winter 20'),
+('George','Fall 24'),
+('Gus','Summer 8'),
+('Haley','Spring 14'),
+('Harvey','Winter 14'),
+('Jas','Summer 4'),
+('Jodi','Fall 11'),
+('Kent','Spring 4'),
+('Krobus','Winter 1'),
+('Leah','Winter 23'),
+('Lewis','Spring 7'),
+('Linus','Winter 3'),
+('Marnie','Fall 18'),
+('Maru','Summer 10'),
+('Pam','Spring 18'),
+('Penny','Fall 2'),
+('Pierre','Spring 26'),
+('Robin','Fall 21'),
+('Sam','Summer 17'),
+('Sandy','Fall 15'),
+('Sebastian','Winter 10'),
+('Shane','Spring 20'),
+('Vincent','Spring 10'),
+('Willy','Summer 24'),
+('Wizard','Winter 17');"""
     
     
     # Creating table
@@ -304,6 +347,10 @@ VALUES
     cursor_obj.execute(table)
     connection_obj.commit()
     cursor_obj.execute(insert)
+    connection_obj.commit()
+    cursor_obj.execute(birthday)
+    connection_obj.commit()
+    cursor_obj.execute(birthdayi)
     connection_obj.commit()
     return cursor_obj, connection_obj
 
