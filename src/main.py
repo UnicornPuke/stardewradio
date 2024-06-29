@@ -52,7 +52,7 @@ async def my_autocomplete2(ctx, option: str):
     return filtered_options[:25]  # Slice to return only 25 options
 
 async def my_autocomplete3(ctx, option: str):
-    all_options = ["Universal", "Abigail", "Alex", "Caroline", "Clint", "Dwarf", "Demetrius", "Elliot", "Emily", "Evelyn", "George", "Gus", "Harvey", "Jas", "Jodi", "Kent", "Krobus", "Leah", "Leo", "Lewis", "Linus", "Marnie", "Maru", "Pam", "Penny", "Pierre", "Robin", "Sam", "Sebastian", "Shane", "Haley"]
+    all_options = ["Universal", "Abigail", "Alex", "Caroline", "Clint", "Dwarf", "Demetrius", "Elliot", "Emily", "Evelyn", "George", "Gus", "Haley", "Harvey", "Jas", "Jodi", "Kent", "Krobus", "Leah", "Leo", "Lewis", "Linus", "Marnie", "Maru", "Pam", "Penny", "Pierre", "Robin", "Sam", "Sandy", "Sebastian", "Shane", "Vincent", "Willy", "Wizard"]
     filtered_options = [i for i in all_options if i.lower().startswith(option.lower())]
     return filtered_options[:25]  # Slice to return only 25 options
 
