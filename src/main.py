@@ -304,7 +304,7 @@ async def crops(ctx: nextcord.Interaction, crop: str = nextcord.SlashOption(auto
     liked.pop(0)
     embed = nextcord.Embed(title=crop, color=0x70c725)
     embed.add_field(name="Seed Cost", value=f"""```{liked[0]}```""")
-    embed.add_field(name="Selling Prices", value=f"""```{liked[3]}```""")
+    embed.add_field(name="Selling Price", value=f"""```{liked[3]}```""")
     if liked[4] != None:
         embed.add_field(name="Profit Margin", value=f"""```{liked[4]}```""", inline=False)
     else:
@@ -383,7 +383,7 @@ async def characters(ctx: nextcord.Interaction, character: str = nextcord.SlashO
     await ctx.send(embed=embed)
 
 @client.slash_command(description="Shows this message.", guild_ids=[1244302066600640613])
-async def help(ctx, command: str = nextcord.SlashOption(name="command", description="The bot's commands or categories", choices=["Home", "Radio Control", "Setup", "Tips", "help", "mute", "volume", "join", "leave", "characters", "items", "fish"])):
+async def help(ctx, command: str = nextcord.SlashOption(name="command", description="The bot's commands or categories", choices=["Home", "Radio Control", "Setup", "Tips", "help", "mute", "volume", "join", "leave", "characters", "items", "fish", "crops"])):
     if command == "Home":
         await ctx.send('''
 ```Radio Control:
@@ -396,6 +396,7 @@ Tips:
   /characters Shows you a character's gift chart.
   /items      Shows you an item's gift chart.
   /fish       Shows you a fish's data chart
+  /crops      Shows you a crop's data chart
 Other:
   /help  Shows this message.
 
@@ -418,9 +419,10 @@ Any command marked with a / is a slash command.```
     elif command == "Tips":
         await ctx.send('''
 ```Tips:
-  /characters Shows you a character's gift chart.
-  /items Shows you an item's gift chart.
-  /fish Shows you a fish's data.```
+  /characters   Shows you a character's gift chart.
+  /items        Shows you an item's gift chart.
+  /fish         Shows you a fish's data.
+  /crops        Shows you a crop's data chart```
 ''')
     elif command == "volume":
         await ctx.send('''
@@ -429,6 +431,12 @@ Any command marked with a / is a slash command.```
 r!volume <new_volume>
 
 Changes the volume of the radio.```
+''')
+    elif command == "crops":
+        await ctx.send('''
+```/crops <crop>
+
+Shows you a crop's data chart.```
 ''')
     elif command == "items":
         await ctx.send('''
