@@ -5,6 +5,7 @@ import asyncio
 import nextcord
 import random
 import datetime
+import nacl
 import os
 import shutil
 from datetime import time as checktime
@@ -98,8 +99,10 @@ async def play_song(song):
         voice_client.append(get(client.voice_clients, guild=guild))
 
     for i in voice_client:
+        volume = i.source.volume
         i.stop()
         i.play(nextcord.FFmpegPCMAudio(current_song))
+        i.source = nextcord.PCMVolumeTransformer(i.source, volume=volume)
     print(f'{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ":", "green")} Playing {SONGNAMES[SONGS.index(current_song.replace("./assets/audio/", ""))]} for {datetime.timedelta(seconds=current_song_length)}')
     global timer
     timer = 0
@@ -116,6 +119,7 @@ async def loop():
 
 async def joinup(ctx):
     channel = ctx.author.voice.channel
+    await ctx.channel.send("```Joining...```")
     vc = await channel.connect()
     if current_song != "":
         rand = random.randint(0, 100000)
@@ -124,6 +128,7 @@ async def joinup(ctx):
         audio_output = ffmpeg.output(audio_cut, f'./assets/out/out{rand}.mp3', loglevel="quiet")
         ffmpeg.run(audio_output)
         vc.play(nextcord.FFmpegPCMAudio(f'./assets/out/out{rand}.mp3'))
+        vc.source = nextcord.PCMVolumeTransformer(vc.source, volume=1.0)
         return f'./assets/out/out{rand}.mp3'
     return None
 
@@ -184,7 +189,7 @@ async def volume(ctx, new_volume=None):
             await ctx.channel.send('```There is no song playing.```')
         else:
             ctx.guild.voice_client.source.volume = new_volume
-            await ctx.channel.send(f'```Set the volume to {new_volume}.```')
+            await ctx.channel.send(f'```Set the volume to {int(new_volume * 100)}.```')
     else:
         await ctx.channel.send('```Please enter a number between 0 and 100.```')
 
@@ -293,7 +298,7 @@ async def mute(ctx):
     elif not ctx.guild.voice_client.source:
         await ctx.channel.send('```There is no song playing.```')
     else:
-        ctx.guild.voice_client.source.volume = 0
+        await ctx.channel.send(f'```Set the volume to 0.```')
 
 @client.command(aliases=["tunein", "connect"], description= "Connects the bot to a voice channel.")
 async def join(ctx):
@@ -305,10 +310,8 @@ async def join(ctx):
         else:
             await ctx.guild.voice_client.disconnect()
             await joinup(ctx)
-            await ctx.channel.send("```Joining...```")
     else:
         await joinup(ctx)
-        await ctx.channel.send("```Joining...```")
             
 @client.command(aliases=["tuneout", "disconnect"], description= "Disconnects the bot from a voice channel.")
 async def leave(ctx):
