@@ -57,6 +57,11 @@ async def my_autocomplete3(ctx, option: str):
     filtered_options = [i for i in all_options if i.lower().startswith(option.lower())]
     return filtered_options[:25]  # Slice to return only 25 options
 
+async def my_autocomplete4(ctx, option: str):
+    all_options = ['Blue Jazz',	'Cauliflower',	'Garlic',	'Kale',	'Parsnip',	'Potato',	'Rhubarb',	'Tulip',	'Rice (Unmilled)',	'Rice (Milled)',	'Melon',	'Poppy',	'Radish',	'Red Cabbage',	'Starfruit',	'Spangle',	'Sunflower',	'Wheat',	'Wheat (Milled)',	'Amaranth',	'Artichoke',	'Beet',	'Bok Choy',	'Fairy Rose',	'Pumpkin',	'Yam',	'Sweet Gem Berry',	'Coffee Bean',	'Green Bean',	'Strawberry',	'Blueberry',	'Corn',	'Hops',	'Hot Pepper',	'Tomato',	'Cranberry','Eggplant',	'Grape',	'Ancient Fruit (Min Cost)',	'Ancient Fruit (Max Cost)',	'Cactus',	'Tea']
+    filtered_options = [i for i in all_options if i.lower().startswith(option.lower())]
+    return filtered_options[:25]  # Slice to return only 25 options
+
 # Constants
 load_dotenv("env/.env")
 if sys.argv[1] == 'test':
@@ -289,6 +294,27 @@ Times:         {liked[12]}
 Difficulty:    {liked[13]}
 ```""", inline=False)
     embed.add_field(name="Bundle", value=f"```{liked[14]}\t```")
+    await ctx.send(embed=embed)
+
+@client.slash_command(description="Shows you an item's data",guild_ids=[1244302066600640613])
+async def crops(ctx: nextcord.Interaction, crop: str = nextcord.SlashOption(autocomplete_callback=my_autocomplete4)):
+    cursor_obj.execute("SELECT * FROM [crops] where Name = '%s'" % crop) 
+    liked = cursor_obj.fetchall()[0]
+    liked = list(liked)
+    liked.pop(0)
+    embed = nextcord.Embed(title=crop, color=0x70c725)
+    embed.add_field(name="Seed Cost", value=f"""```{liked[0]}```""")
+    embed.add_field(name="Selling Prices", value=f"""```{liked[3]}```""")
+    if liked[4] != None:
+        embed.add_field(name="Profit Margin", value=f"""```{liked[4]}```""", inline=False)
+    else:
+        embed.add_field(name="Profit Margin/Season", value=f"""```{liked[5]}```""", inline=False)
+    embed.add_field(name="Growth Days", value=f"""```{liked[1]}```""")
+    if liked[2] != None:
+        embed.add_field(name="Regrowth Days", value=f"""```{liked[2]}```""")
+    embed.add_field(name="", value=f"""""", inline=False)
+    embed.add_field(name="Harvests/Season", value=f"""```{liked[6]}```""")
+    embed.add_field(name="Season", value=f"""```{liked[7]}```""")
     await ctx.send(embed=embed)
 
 @client.command(description= "Sets the radio volume to zero.")

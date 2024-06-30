@@ -2,22 +2,80 @@ import sqlite3
 
 def data():
 
-    connection_obj = sqlite3.connect('assets/data.db')
-    
-    # cursor object
-    cursor_obj = connection_obj.cursor()
+  connection_obj = sqlite3.connect('assets/data.db')
+  
+  # cursor object
+  cursor_obj = connection_obj.cursor()
 
-    cursor_obj.execute("DROP TABLE IF EXISTS [cooltable]")
-    cursor_obj.execute("DROP TABLE IF EXISTS [birthday]")
-    cursor_obj.execute("DROP TABLE IF EXISTS [fish]")
+  cursor_obj.execute("DROP TABLE IF EXISTS [cooltable]")
+  cursor_obj.execute("DROP TABLE IF EXISTS [birthday]")
+  cursor_obj.execute("DROP TABLE IF EXISTS [fish]")
+  cursor_obj.execute("DROP TABLE IF EXISTS [crops]")
+
+  crops = """CREATE TABLE [crops] (
+  [Name] TEXT,
+  [Seed Cost] TEXT,
+  [Days] INT,
+  [Regrow Days] TEXT NULL,
+  [Sell Price] INT,
+  [Profit Margin] TEXT NULL,
+  [Profit Margin/Season] TEXT NULL,
+  [Harvests/Season] INT,
+  [Season] TEXT
+);"""
+
+  cropsi = """INSERT INTO [crops] ([Name],[Seed Cost],[Days],[Regrow Days],[Sell Price],[Profit Margin],[Profit Margin/Season],[Harvests/Season],[Season])
+VALUES
+('Blue Jazz','30',7,NULL,50,'66.67%',NULL,3,'Spring'),
+('Cauliflower','80',12,NULL,175,'118.75%',NULL,2,'Spring'),
+('Garlic','40',4,NULL,60,'50.00%',NULL,6,'Spring'),
+('Kale','70',6,NULL,110,'57.14%',NULL,4,'Spring'),
+('Parsnip','20',4,NULL,35,'75.00%',NULL,6,'Spring'),
+('Potato','50',6,NULL,100,'100.00%',NULL,4,'Spring'),
+('Rhubarb','100',13,NULL,220,'120.00%',NULL,2,'Spring'),
+('Tulip','20',6,NULL,30,'50.00%',NULL,4,'Spring'),
+('Rice (Unmilled)','40',8,NULL,30,'-25.00%',NULL,3,'Spring'),
+('Rice (Milled)','40',8,NULL,100,'150.00%',NULL,3,'Spring'),
+('Melon','80',12,NULL,250,'212.50%',NULL,2,'Summer'),
+('Poppy','100',7,NULL,140,'40.00%',NULL,3,'Summer'),
+('Radish','40',6,NULL,90,'125.00%',NULL,4,'Summer'),
+('Red Cabbage','100',9,NULL,260,'160.00%',NULL,3,'Summer'),
+('Starfruit','400',13,NULL,750,'87.50%',NULL,2,'Summer'),
+('Spangle','50',8,NULL,90,'80.00%',NULL,3,'Summer'),
+('Sunflower','200',8,NULL,80,'-60.00%',NULL,3,'Summer'),
+('Wheat','10',4,NULL,25,'150.00%',NULL,6,'Summer, Fall'),
+('Wheat (Milled)','10',4,NULL,50,'400.00%',NULL,6,'Summer, Fall'),
+('Amaranth','70',7,NULL,150,'114.29%',NULL,3,'Fall'),
+('Artichoke','30',8,NULL,160,'433.33%',NULL,3,'Fall'),
+('Beet','20',6,NULL,100,'400.00%',NULL,4,'Fall'),
+('Bok Choy','50',4,NULL,80,'60.00%',NULL,6,'Fall'),
+('Fairy Rose','200',12,NULL,290,'45.00%',NULL,2,'Fall'),
+('Pumpkin','100',13,NULL,320,'220.00%',NULL,2,'Fall'),
+('Yam','60',10,NULL,160,'166.67%',NULL,2,'Fall'),
+('Sweet Gem Berry','1000',24,NULL,3000,'200.00%',NULL,1,'Fall'),
+('Coffee Bean','2,500',10,'2',60,NULL,'-78.40%',9,'Spring, Summer'),
+('Green Bean','60',10,'3',40,NULL,'300.00%',6,'Spring'),
+('Strawberry','100',8,'4',120,NULL,'500.00%',5,'Spring'),
+('Blueberry','80',13,'4',50,NULL,'150.00%',4,'Summer'),
+('Corn','150',14,'4',50,NULL,'33.33%',4,'Summer, Fall'),
+('Hops','60',11,'1',25,NULL,'608.33%',17,'Summer'),
+('Hot Pepper','40',5,'3',40,NULL,'700.00%',8,'Summer'),
+('Tomato','50',11,'4',60,NULL,'500.00%',5,'Summer'),
+('Cranberry','240',7,'5',75,NULL,'56.25%',5,'Fall'),
+('Eggplant','20',5,'5',60,NULL,'1400.00%',5,'Fall'),
+('Grape','60',10,'3',80,NULL,'700.00%',6,'Fall'),
+('Ancient Fruit (Min Cost)','100',28,'7',550,NULL,'-100.00%',0,'Spring, Summer, Fall'),
+('Ancient Fruit (Max Cost)','1000',28,'7',550,NULL,'-100.00%',0,'Spring, Summer, Fall'),
+('Cactus','150',12,'3',75,NULL,'200.00%',6,'All'),
+('Tea','10 Calico Eggs',20,'1',50,NULL,'Infinity',8,'Spring, Summer, Fall');"""
 
 
-    birthday = """CREATE TABLE [birthday] (
+  birthday = """CREATE TABLE [birthday] (
   [People] TEXT,
   [Birthday] TEXT
 );"""
 
-    birthdayi = """INSERT INTO [birthday] ([People],[Birthday])
+  birthdayi = """INSERT INTO [birthday] ([People],[Birthday])
 VALUES
 ('Abigail','Fall 13'),
 ('Alex','Summer 13'),
@@ -55,7 +113,7 @@ VALUES
     
     
     # Creating table
-    table = """ CREATE TABLE [cooltable] (
+  table = """ CREATE TABLE [cooltable] (
   [People] TEXT,
   [Amaranth] TEXT,
   [Amethyst] TEXT,
@@ -233,7 +291,7 @@ VALUES
   [Stardrop Tea] TEXT
 );"""
 
-    insert="""INSERT INTO [cooltable] ([People],[Amaranth],[Amethyst],[Aquamarine],[Artichoke Dip],[Autumn's Bounty],[Baked Fish],[Banana Pudding],[Battery Pack],[Bean Hotpot],[Beer],[Beet],[Blackberry Cobbler],[Blueberry],[Blueberry Tart],[Cactus Fruit],[Carp Surprise],[Catfish],[Cauliflower],[Cave Carrot],[Chanterelle],[Cheese Cauliflower],[Chocolate Cake],[Chowder],[Clay],[Cloth],[Coconut],[Coffee],[Common Mushroom],[Complete Breakfast],[Copper Bar],[Crab Cakes],[Cranberry Candy],[Crispy Bass],[Crocus],[Daffodil],[Dandelion],[Diamond],[Dish O' The Sea],[Dragon Tooth],[Driftwood],[Duck Egg],[Duck Feather],[Eggplant Parmesan],[Emerald],[Escargot],[Fairy Rose],[Farmer's Lunch],[Fiddlehead Risotto],[Fish Stew],[Fish Taco],[Flounder],[Fried Calamari],[Fried Eel],[Fried Mushroom],[Frozen Tear],[Fruit Salad],[Ginger],[Ginger Ale],[Glazed Yams],[Goat Cheese],[Goat Milk],[Gold Bar],[Grape],[Green Tea],[Hazelnut],[Holly],[Hot Pepper],[Ice Cream],[Iridium Bar],[Jade],[Jelly],[Joja Cola],[Large Goat Milk],[Leek],[Lemon Stone],[Lingcod],[Lobster],[Lobster Bisque],[Magma Cap],[Mango],[Mango Sticky Rice],[Maple Bar],[Mead],[Melon],[Miner's Treat],[Morel],[Nautilus Shell],[Oak Resin],[Obsidian],[Octopus],[Omni Geode],[Orange],[Ostrich Egg],[Pale Ale],[Pancakes],[Parsnip Soup],[Peach],[Pepper Poppers],[Pickles],[Piña Colada],[Pine Tar],[Pink Cake],[Pizza],[Plum Pudding],[Poi],[Pomegranate],[Poppy],[Poppyseed Muffin],[Pufferfish],[Pumpkin],[Pumpkin Pie],[Pumpkin Soup],[Purple Mushroom],[Quartz],[Radioactive Bar],[Radioactive Ore],[Rainbow Shell],[Red Plate],[Rhubarb Pie],[Rice Pudding],[Roasted Hazelnuts],[Roots Platter],[Ruby],[Salad],[Salmon Dinner],[Sandfish],[Sashimi],[Sea Cucumber],[Sea Urchin],[Seafoam Pudding],[Snail],[Snow Yam],[Solar Essence],[Spaghetti],[Spice Berry],[Spicy Eel],[Squid],[Squid Ink],[Stir Fry],[Strawberry],[Stuffing],[Sturgeon],[Sugar],[Summer Spangle],[Sunflower],[Super Cucumber],[Super Meal],[Survival Burger],[Sweet Pea],[Tea Leaves],[Tiger Trout],[Tigerseye],[Tom Kha Soup],[Topaz],[Tropical Curry],[Trout Soup],[Truffle],[Truffle Oil],[Tulip],[Vegetable Medley],[Void Egg],[Void Essence],[Void Mayonnaise],[Wild Horseradish],[Wine],[Winter Root],[Wool],[Yam],[Golden Pumpkin],[Magic Rock Candy],[Pearl],[Prismatic Shard],[Rabbit's Foot],[Stardrop Tea])
+  insert="""INSERT INTO [cooltable] ([People],[Amaranth],[Amethyst],[Aquamarine],[Artichoke Dip],[Autumn's Bounty],[Baked Fish],[Banana Pudding],[Battery Pack],[Bean Hotpot],[Beer],[Beet],[Blackberry Cobbler],[Blueberry],[Blueberry Tart],[Cactus Fruit],[Carp Surprise],[Catfish],[Cauliflower],[Cave Carrot],[Chanterelle],[Cheese Cauliflower],[Chocolate Cake],[Chowder],[Clay],[Cloth],[Coconut],[Coffee],[Common Mushroom],[Complete Breakfast],[Copper Bar],[Crab Cakes],[Cranberry Candy],[Crispy Bass],[Crocus],[Daffodil],[Dandelion],[Diamond],[Dish O' The Sea],[Dragon Tooth],[Driftwood],[Duck Egg],[Duck Feather],[Eggplant Parmesan],[Emerald],[Escargot],[Fairy Rose],[Farmer's Lunch],[Fiddlehead Risotto],[Fish Stew],[Fish Taco],[Flounder],[Fried Calamari],[Fried Eel],[Fried Mushroom],[Frozen Tear],[Fruit Salad],[Ginger],[Ginger Ale],[Glazed Yams],[Goat Cheese],[Goat Milk],[Gold Bar],[Grape],[Green Tea],[Hazelnut],[Holly],[Hot Pepper],[Ice Cream],[Iridium Bar],[Jade],[Jelly],[Joja Cola],[Large Goat Milk],[Leek],[Lemon Stone],[Lingcod],[Lobster],[Lobster Bisque],[Magma Cap],[Mango],[Mango Sticky Rice],[Maple Bar],[Mead],[Melon],[Miner's Treat],[Morel],[Nautilus Shell],[Oak Resin],[Obsidian],[Octopus],[Omni Geode],[Orange],[Ostrich Egg],[Pale Ale],[Pancakes],[Parsnip Soup],[Peach],[Pepper Poppers],[Pickles],[Piña Colada],[Pine Tar],[Pink Cake],[Pizza],[Plum Pudding],[Poi],[Pomegranate],[Poppy],[Poppyseed Muffin],[Pufferfish],[Pumpkin],[Pumpkin Pie],[Pumpkin Soup],[Purple Mushroom],[Quartz],[Radioactive Bar],[Radioactive Ore],[Rainbow Shell],[Red Plate],[Rhubarb Pie],[Rice Pudding],[Roasted Hazelnuts],[Roots Platter],[Ruby],[Salad],[Salmon Dinner],[Sandfish],[Sashimi],[Sea Cucumber],[Sea Urchin],[Seafoam Pudding],[Snail],[Snow Yam],[Solar Essence],[Spaghetti],[Spice Berry],[Spicy Eel],[Squid],[Squid Ink],[Stir Fry],[Strawberry],[Stuffing],[Sturgeon],[Sugar],[Summer Spangle],[Sunflower],[Super Cucumber],[Super Meal],[Survival Burger],[Sweet Pea],[Tea Leaves],[Tiger Trout],[Tigerseye],[Tom Kha Soup],[Topaz],[Tropical Curry],[Trout Soup],[Truffle],[Truffle Oil],[Tulip],[Vegetable Medley],[Void Egg],[Void Essence],[Void Mayonnaise],[Wild Horseradish],[Wine],[Winter Root],[Wool],[Yam],[Golden Pumpkin],[Magic Rock Candy],[Pearl],[Prismatic Shard],[Rabbit's Foot],[Stardrop Tea])
 VALUES
 ('Abigail','Dislike','Love','Like','Like','Like','Like','Love','Dislike','Like','Like','Dislike','Love','Dislike','Like','Dislike','Like','Dislike','Dislike','Dislike','Neutral','Like','Love','Like','Hate','Like','Dislike','Like','Neutral','Like','Dislike','Like','Like','Like','Like','Neutral','Neutral','Like','Like','Hate','Dislike','Dislike','Neutral','Like','Like','Like','Like','Like','Like','Like','Like','Dislike','Like','Like','Like','Like','Like','Neutral','Like','Like','Like','Neutral','Dislike','Dislike','Like','Neutral','Hate','Dislike','Like','Dislike','Like','Like','Hate','Neutral','Neutral','Dislike','Dislike','Dislike','Like','Neutral','Dislike','Like','Like','Like','Dislike','Like','Neutral','Neutral','Dislike','Dislike','Dislike','Dislike','Like','Dislike','Like','Like','Like','Like','Like','Like','Like','Dislike','Like','Like','Like','Like','Like','Hate','Like','Love','Love','Like','Like','Neutral','Like','Hate','Hate','Neutral','Like','Like','Like','Like','Like','Like','Like','Like','Dislike','Like','Dislike','Hate','Hate','Hate','Neutral','Dislike','Like','Dislike','Love','Dislike','Neutral','Like','Dislike','Like','Dislike','Dislike','Like','Like','Dislike','Like','Like','Like','Neutral','Dislike','Dislike','Like','Like','Like','Like','Neutral','Like','Like','Like','Dislike','Dislike','Hate','Dislike','Like','Neutral','Neutral','Dislike','Love','Love','Love','Love','Love','Love'),
 ('Alex','Like','Like','Like','Like','Like','Like','Like','Dislike','Like','Like','Like','Like','Neutral','Like','Neutral','Like','Dislike','Like','Dislike','Neutral','Like','Like','Like','Dislike','Like','Neutral','Like','Neutral','Love','Dislike','Like','Like','Like','Like','Neutral','Neutral','Like','Like','Hate','Dislike','Like','Neutral','Like','Like','Like','Like','Like','Like','Like','Like','Dislike','Like','Like','Like','Like','Like','Neutral','Like','Like','Like','Neutral','Dislike','Neutral','Like','Neutral','Hate','Neutral','Like','Dislike','Like','Like','Hate','Neutral','Neutral','Dislike','Dislike','Dislike','Like','Neutral','Neutral','Like','Like','Like','Neutral','Like','Neutral','Neutral','Dislike','Dislike','Dislike','Dislike','Like','Like','Like','Like','Like','Like','Like','Like','Like','Dislike','Like','Like','Like','Like','Like','Hate','Like','Dislike','Like','Like','Like','Neutral','Hate','Hate','Hate','Neutral','Like','Like','Like','Like','Like','Like','Like','Love','Dislike','Like','Dislike','Hate','Hate','Hate','Neutral','Dislike','Like','Neutral','Like','Dislike','Neutral','Like','Neutral','Like','Dislike','Hate','Like','Like','Dislike','Like','Like','Like','Neutral','Dislike','Dislike','Like','Like','Like','Like','Neutral','Like','Like','Like','Dislike','Dislike','Hate','Dislike','Like','Neutral','Neutral','Like','Love','Love','Love','Love','Love','Love'),
@@ -270,30 +328,30 @@ VALUES
 ('Willy','Like','Like','Like','Dislike','Dislike','Like','Dislike','Dislike','Dislike','Like','Like','Dislike','Neutral','Dislike','Neutral','Like','Love','Like','Dislike','Dislike','Dislike','Dislike','Like','Dislike','Like','Neutral','Like','Dislike','Dislike','Dislike','Like','Dislike','Like','Like','Dislike','Dislike','Love','Neutral','Hate','Dislike','Neutral','Neutral','Dislike','Like','Dislike','Like','Like','Dislike','Like','Like','Dislike','Like','Like','Dislike','Like','Dislike','Dislike','Dislike','Dislike','Like','Neutral','Like','Neutral','Like','Dislike','Dislike','Neutral','Dislike','Love','Like','Like','Hate','Neutral','Dislike','Dislike','Like','Neutral','Like','Dislike','Neutral','Dislike','Dislike','Love','Neutral','Dislike','Dislike','Neutral','Dislike','Dislike','Love','Dislike','Like','Neutral','Like','Dislike','Dislike','Like','Dislike','Like','Like','Dislike','Dislike','Dislike','Dislike','Dislike','Like','Hate','Dislike','Neutral','Love','Like','Dislike','Dislike','Like','Hate','Hate','Neutral','Dislike','Dislike','Dislike','Dislike','Dislike','Like','Dislike','Like','Neutral','Neutral','Love','Hate','Like','Hate','Dislike','Dislike','Dislike','Neutral','Dislike','Like','Neutral','Dislike','Neutral','Dislike','Love','Hate','Like','Like','Neutral','Dislike','Dislike','Like','Neutral','Like','Dislike','Dislike','Like','Dislike','Like','Neutral','Like','Like','Dislike','Dislike','Dislike','Hate','Dislike','Like','Dislike','Neutral','Like','Love','Love','Love','Love','Love','Love'),
 ('Wizard','Like','Like','Like','Like','Like','Like','Like','Dislike','Like','Like','Like','Like','Neutral','Like','Neutral','Like','Dislike','Like','Dislike','Dislike','Like','Like','Like','Dislike','Like','Neutral','Like','Dislike','Like','Dislike','Like','Like','Like','Like','Dislike','Dislike','Like','Like','Hate','Dislike','Dislike','Neutral','Like','Like','Like','Like','Like','Like','Like','Like','Dislike','Like','Like','Like','Like','Like','Dislike','Like','Like','Like','Dislike','Dislike','Neutral','Like','Dislike','Dislike','Neutral','Like','Dislike','Like','Like','Hate','Dislike','Dislike','Like','Dislike','Dislike','Like','Dislike','Neutral','Like','Like','Like','Neutral','Like','Dislike','Neutral','Dislike','Like','Dislike','Dislike','Like','Dislike','Like','Like','Like','Like','Like','Like','Like','Dislike','Like','Like','Like','Like','Like','Hate','Like','Dislike','Like','Like','Like','Love','Like','Hate','Hate','Neutral','Like','Like','Like','Like','Like','Like','Like','Like','Dislike','Like','Dislike','Hate','Hate','Hate','Dislike','Love','Like','Neutral','Like','Dislike','Neutral','Like','Neutral','Like','Dislike','Hate','Like','Like','Love','Like','Like','Like','Neutral','Dislike','Like','Like','Like','Like','Like','Neutral','Like','Like','Like','Dislike','Love','Hate','Dislike','Like','Dislike','Neutral','Like','Love','Love','Love','Love','Love','Love');
 """
-    cursor_obj.execute(table)
-    connection_obj.commit()
-    cursor_obj.execute(insert)
-    connection_obj.commit()
-    table = '''CREATE TABLE [fish] (
-  [Stardew ValleyFish Guide (1.6.7)] TEXT,
-  [Base Price] INT,
-  [Price] INT,
-  [] INT,
-  [_2] INT,
-  [_3] INT,
-  [Spring] TEXT,
-  [Summer] TEXT,
-  [Fall] TEXT,
-  [Winter] TEXT,
-  [Weather] TEXT,
-  [Location] TEXT,
-  [Time] TEXT,
-  [Difficulty] TEXT,
-  [Bundle] TEXT,
-  [Caught?] INT
+  cursor_obj.execute(table)
+  connection_obj.commit()
+  cursor_obj.execute(insert)
+  connection_obj.commit()
+  table = '''CREATE TABLE [fish] (
+[Fish] TEXT,
+[Base Price] INT,
+[Price] INT,
+[] INT,
+[_2] INT,
+[_3] INT,
+[Spring] TEXT,
+[Summer] TEXT,
+[Fall] TEXT,
+[Winter] TEXT,
+[Weather] TEXT,
+[Location] TEXT,
+[Time] TEXT,
+[Difficulty] TEXT,
+[Bundle] TEXT,
+[Caught?] INT
 );'''
 
-    insert='''INSERT INTO [fish] ([Stardew ValleyFish Guide (1.6.7)],[Base Price],[Price],[],[_2],[_3],[Spring],[Summer],[Fall],[Winter],[Weather],[Location],[Time],[Difficulty],[Bundle],[Caught?])
+  insert='''INSERT INTO [fish] ([Fish],[Base Price],[Price],[],[_2],[_3],[Spring],[Summer],[Fall],[Winter],[Weather],[Location],[Time],[Difficulty],[Bundle],[Caught?])
 VALUES
 ('Albacore',75,75,93,112,150,'No','No','Yes','Yes','Any','Ocean','6 AM - 11 AM
 6 PM - 2 AM','Hard','No',FALSE),
@@ -352,14 +410,18 @@ VALUES
 ('Void Salmon',150,150,187,225,300,'Yes','Yes','Yes','Yes','Any','Witch''s Swamp','Anytime','Very Hard','No',FALSE),
 ('Walleye',105,105,131,157,210,'No','No','Yes','No','Rainy','Mountain Lake, River','12 PM - 2 AM','Medium','Night Fishing Bundle',FALSE),
 ('Woodskip',75,75,93,112,150,'Yes','Yes','Yes','Yes','Any','Secret Woods','Anytime','Medium','Specialty Fish Bundle',FALSE);'''
-    cursor_obj.execute(table)
-    connection_obj.commit()
-    cursor_obj.execute(insert)
-    connection_obj.commit()
-    cursor_obj.execute(birthday)
-    connection_obj.commit()
-    cursor_obj.execute(birthdayi)
-    connection_obj.commit()
-    return cursor_obj, connection_obj
+  cursor_obj.execute(table)
+  connection_obj.commit()
+  cursor_obj.execute(insert)
+  connection_obj.commit()
+  cursor_obj.execute(birthday)
+  connection_obj.commit()
+  cursor_obj.execute(birthdayi)
+  connection_obj.commit()
+  cursor_obj.execute(crops)
+  connection_obj.commit()
+  cursor_obj.execute(cropsi)
+  connection_obj.commit()
+  return cursor_obj, connection_obj
 
 data()
