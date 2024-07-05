@@ -42,10 +42,12 @@ for i in client.guilds:
 @client.event
 async def on_command_error(ctx, error):
     await ctx.send(f"```Error flagged: {error}```")
+    raise error
 
 @client.event
 async def on_application_command_error(ctx, error):
     await ctx.send(f"```Error flagged: {error}```")
+    raise error
 
 async def my_autocomplete(ctx, option: str):
     all_options = ['Amaranth','Amethyst','Aquamarine','Artichoke Dip',"Autumn's Bounty",'Baked Fish','Banana Pudding','Battery Pack','Bean Hotpot','Beer','Beet','Blackberry Cobbler','Blueberry','Blueberry Tart','Cactus Fruit','Carp Surprise','Catfish','Cauliflower','Cave Carrot','Chanterelle','Cheese Cauliflower','Chocolate Cake','Chowder','Clay','Cloth','Coconut','Coffee','Common Mushroom','Complete Breakfast', 'Copper Bar', 'Crab Cakes', 'Cranberry Candy', 'Crispy Bass', 'Crocus', 'Daffodil', 'Dandelion', 'Diamond', "Dish O' The Sea", 'Dragon Tooth', 'Driftwood', 'Duck Egg', 'Duck Feather', 'Eggplant Parmesan', 'Emerald', 'Escargot', 'Fairy Rose', "Farmer's Lunch", 'Fiddlehead Risotto', 'Fish Stew', 'Fish Taco', 'Flounder', 'Fried Calamari', 'Fried Eel', 'Fried Mushroom', 'Frozen Tear', 'Fruit Salad', 'Ginger', 'Ginger Ale', 'Glazed Yams', 'Goat Cheese', 'Goat Milk', 'Gold Bar', 'Golden Pumpkin', 'Grape', 'Green Tea', 'Hazelnut', 'Holly', 'Hot Pepper', 'Ice Cream', 'Iridium Bar', 'Jade', 'Jelly', 'Joja Cola', 'Large Goat Milk', 'Leek', 'Lemon Stone', 'Lingcod', 'Lobster', 'Lobster Bisque', 'Magic Rock Candy', 'Magma Cap', 'Mango', 'Mango Sticky Rice', 'Maple Bar', 'Mead', 'Melon', "Miner's Treat", 'Morel', 'Nautilus Shell', 'Oak Resin', 'Obsidian', 'Octopus', 'Omni Geode', 'Orange', 'Ostrich Egg', 'Pale Ale', 'Pancakes', 'Parsnip Soup', 'Peach', 'Pearl', 'Pepper Poppers', 'Pickles', 'Piña Colada', 'Pine Tar', 'Pink Cake', 'Pizza', 'Plum Pudding', 'Poi', 'Pomegranate', 'Poppy', 'Poppyseed Muffin', "Prismatic Shard", 'Pufferfish', 'Pumpkin', 'Pumpkin Pie', 'Pumpkin Soup', 'Purple Mushroom', 'Quartz', "Rabbit's Foot" 'Radioactive Bar', 'Radioactive Ore', 'Rainbow Shell', 'Red Plate', 'Rhubarb Pie', 'Rice Pudding', 'Roasted Hazelnuts', 'Roots Platter', 'Ruby', 'Salad', 'Salmon Dinner', 'Sandfish', 'Sashimi', 'Sea Cucumber', 'Sea Urchin', 'Seafoam Pudding', 'Snail', 'Snow Yam', 'Solar Essence', 'Spaghetti', 'Spice Berry', 'Spicy Eel', 'Squid', 'Squid Ink', 'Stardrop Tea', 'Stir Fry', 'Strawberry', 'Stuffing', 'Sturgeon', 'Sugar', 'Summer Spangle', 'Sunflower', 'Super Cucumber', 'Super Meal', 'Survival Burger', 'Sweet Pea', 'Tea Leaves', 'Tiger Trout', 'Tigerseye', 'Tom Kha Soup', 'Topaz', 'Tropical Curry', 'Trout Soup', 'Truffle', 'Truffle Oil', 'Tulip', 'Vegetable Medley', 'Void Egg', 'Void Essence', 'Void Mayonnaise', 'Wild Horseradish', 'Wine', 'Winter Root', 'Wool', 'Yam']  # Your full list
@@ -142,7 +144,6 @@ async def joinup(ctx, join=True):
     vc.play(nextcord.FFmpegPCMAudio(f'./assets/out/out{rand}.mp3'))
     vc.source = nextcord.PCMVolumeTransformer(vc.source, volume=1.0)
     return f'./assets/out/out{rand}.mp3'
-    return None
 
 def clearout():
     print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Cleared ./assets/out contents")
