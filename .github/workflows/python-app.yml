@@ -31,5 +31,6 @@ jobs:
     steps:
     - name: Run bot
       run: |
+        cp /home/adam/token.txt env/.env
         source env/bin/activate
         python src/main.py main
