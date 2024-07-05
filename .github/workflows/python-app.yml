@@ -18,12 +18,10 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - name: Setup env
-      run: |
-        python -m venv env
-        source env/bin/activate
     - name: Install dependencies
       run: |
+        python3 -m venv env
+        source env/bin/activate
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
