@@ -31,4 +31,5 @@ jobs:
     steps:
     - name: Run bot
       run: |
+        source env/bin/activate
         python src/main.py main
