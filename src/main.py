@@ -5,6 +5,7 @@ import asyncio
 import nextcord
 import random
 import datetime
+import nacl
 import os
 import shutil
 from datetime import time as checktime
@@ -47,12 +48,22 @@ async def on_application_command_error(ctx, error):
     await ctx.send(f"```Error flagged: {error}```")
 
 async def my_autocomplete(ctx, option: str):
-    all_options = ['Amaranth','Amethyst','Aquamarine','Artichoke Dip',"Autumn's Bounty",'Baked Fish','Banana Pudding','Battery Pack','Bean Hotpot','Beer','Beet','Blackberry Cobbler','Blueberry','Blueberry Tart','Cactus Fruit','Carp Surprise','Catfish','Cauliflower','Cave Carrot','Chanterelle','Cheese Cauliflower','Chocolate Cake','Chowder','Clay','Cloth','Coconut','Coffee','Common Mushroom','Complete Breakfast', 'Copper Bar', 'Crab Cakes', 'Cranberry Candy', 'Crispy Bass', 'Crocus', 'Daffodil', 'Dandelion', 'Diamond', "Dish O' The Sea", 'Dragon Tooth', 'Driftwood', 'Duck Egg', 'Duck Feather', 'Eggplant Parmesan', 'Emerald', 'Escargot', 'Fairy Rose', "Farmer's Lunch", 'Fiddlehead Risotto', 'Fish Stew', 'Fish Taco', 'Flounder', 'Fried Calamari', 'Fried Eel', 'Fried Mushroom', 'Frozen Tear', 'Fruit Salad', 'Ginger', 'Ginger Ale', 'Glazed Yams', 'Goat Cheese', 'Goat Milk', 'Gold Bar', 'Grape', 'Green Tea', 'Hazelnut', 'Holly', 'Hot Pepper', 'Ice Cream', 'Iridium Bar', 'Jade', 'Jelly', 'Joja Cola', 'Large Goat Milk', 'Leek', 'Lemon Stone', 'Lingcod', 'Lobster', 'Lobster Bisque', 'Magma Cap', 'Mango', 'Mango Sticky Rice', 'Maple Bar', 'Mead', 'Melon', "Miner's Treat", 'Morel', 'Nautilus Shell', 'Oak Resin', 'Obsidian', 'Octopus', 'Omni Geode', 'Orange', 'Ostrich Egg', 'Pale Ale', 'Pancakes', 'Parsnip Soup', 'Peach', 'Pepper Poppers', 'Pickles', 'Piña Colada', 'Pine Tar', 'Pink Cake', 'Pizza', 'Plum Pudding', 'Poi', 'Pomegranate', 'Poppy', 'Poppyseed Muffin', 'Pufferfish', 'Pumpkin', 'Pumpkin Pie', 'Pumpkin Soup', 'Purple Mushroom', 'Quartz', 'Radioactive Bar', 'Radioactive Ore', 'Rainbow Shell', 'Red Plate', 'Rhubarb Pie', 'Rice Pudding', 'Roasted Hazelnuts', 'Roots Platter', 'Ruby', 'Salad', 'Salmon Dinner', 'Sandfish', 'Sashimi', 'Sea Cucumber', 'Sea Urchin', 'Seafoam Pudding', 'Snail', 'Snow Yam', 'Solar Essence', 'Spaghetti', 'Spice Berry', 'Spicy Eel', 'Squid', 'Squid Ink', 'Stir Fry', 'Strawberry', 'Stuffing', 'Sturgeon', 'Sugar', 'Summer Spangle', 'Sunflower', 'Super Cucumber', 'Super Meal', 'Survival Burger', 'Sweet Pea', 'Tea Leaves', 'Tiger Trout', 'Tigerseye', 'Tom Kha Soup', 'Topaz', 'Tropical Curry', 'Trout Soup', 'Truffle', 'Truffle Oil', 'Tulip', 'Vegetable Medley', 'Void Egg', 'Void Essence', 'Void Mayonnaise', 'Wild Horseradish', 'Wine', 'Winter Root', 'Wool', 'Yam']  # Your full list
+    all_options = ['Amaranth','Amethyst','Aquamarine','Artichoke Dip',"Autumn's Bounty",'Baked Fish','Banana Pudding','Battery Pack','Bean Hotpot','Beer','Beet','Blackberry Cobbler','Blueberry','Blueberry Tart','Cactus Fruit','Carp Surprise','Catfish','Cauliflower','Cave Carrot','Chanterelle','Cheese Cauliflower','Chocolate Cake','Chowder','Clay','Cloth','Coconut','Coffee','Common Mushroom','Complete Breakfast', 'Copper Bar', 'Crab Cakes', 'Cranberry Candy', 'Crispy Bass', 'Crocus', 'Daffodil', 'Dandelion', 'Diamond', "Dish O' The Sea", 'Dragon Tooth', 'Driftwood', 'Duck Egg', 'Duck Feather', 'Eggplant Parmesan', 'Emerald', 'Escargot', 'Fairy Rose', "Farmer's Lunch", 'Fiddlehead Risotto', 'Fish Stew', 'Fish Taco', 'Flounder', 'Fried Calamari', 'Fried Eel', 'Fried Mushroom', 'Frozen Tear', 'Fruit Salad', 'Ginger', 'Ginger Ale', 'Glazed Yams', 'Goat Cheese', 'Goat Milk', 'Gold Bar', 'Golden Pumpkin', 'Grape', 'Green Tea', 'Hazelnut', 'Holly', 'Hot Pepper', 'Ice Cream', 'Iridium Bar', 'Jade', 'Jelly', 'Joja Cola', 'Large Goat Milk', 'Leek', 'Lemon Stone', 'Lingcod', 'Lobster', 'Lobster Bisque', 'Magic Rock Candy', 'Magma Cap', 'Mango', 'Mango Sticky Rice', 'Maple Bar', 'Mead', 'Melon', "Miner's Treat", 'Morel', 'Nautilus Shell', 'Oak Resin', 'Obsidian', 'Octopus', 'Omni Geode', 'Orange', 'Ostrich Egg', 'Pale Ale', 'Pancakes', 'Parsnip Soup', 'Peach', 'Pearl', 'Pepper Poppers', 'Pickles', 'Piña Colada', 'Pine Tar', 'Pink Cake', 'Pizza', 'Plum Pudding', 'Poi', 'Pomegranate', 'Poppy', 'Poppyseed Muffin', "Prismatic Shard", 'Pufferfish', 'Pumpkin', 'Pumpkin Pie', 'Pumpkin Soup', 'Purple Mushroom', 'Quartz', "Rabbit's Foot" 'Radioactive Bar', 'Radioactive Ore', 'Rainbow Shell', 'Red Plate', 'Rhubarb Pie', 'Rice Pudding', 'Roasted Hazelnuts', 'Roots Platter', 'Ruby', 'Salad', 'Salmon Dinner', 'Sandfish', 'Sashimi', 'Sea Cucumber', 'Sea Urchin', 'Seafoam Pudding', 'Snail', 'Snow Yam', 'Solar Essence', 'Spaghetti', 'Spice Berry', 'Spicy Eel', 'Squid', 'Squid Ink', 'Stardrop Tea', 'Stir Fry', 'Strawberry', 'Stuffing', 'Sturgeon', 'Sugar', 'Summer Spangle', 'Sunflower', 'Super Cucumber', 'Super Meal', 'Survival Burger', 'Sweet Pea', 'Tea Leaves', 'Tiger Trout', 'Tigerseye', 'Tom Kha Soup', 'Topaz', 'Tropical Curry', 'Trout Soup', 'Truffle', 'Truffle Oil', 'Tulip', 'Vegetable Medley', 'Void Egg', 'Void Essence', 'Void Mayonnaise', 'Wild Horseradish', 'Wine', 'Winter Root', 'Wool', 'Yam']  # Your full list
     filtered_options = [i for i in all_options if i.lower().startswith(option.lower())]
     return filtered_options[:25]  # Slice to return only 25 options
 
 async def my_autocomplete2(ctx, option: str):
     all_options = ['Albacore',	'Anchovy',	'Angler',	'Blob Fish',	'Blue Discus',	'Bream',	'Bullhead',	'Carp',	'Catfish',	'Chub',	'Crimsonfish',	'Dorado',	'Eel',	'Flounder',	'Ghostfish',	'Glacierfish',	'Gobi',	'Halibut',	'Herring',	'Ice Pip',	'Largemouth Bass',	'Lava Eel',	'Legend',	'Lingcod',	'Lionfish',	'Midnight Carp',	'Midnight Squid',	'Mutant Carp',	'Octopus',	'Perch',	'Pike',	'Pufferfish',	'Rainbow Trout',	'Red Mullet',	'Red Snapper',	'Salmon',	'Sandfish',	'Sardine',	'Scorpion Carp',	'Sea Cucumber',	'Shad',	'Slimejack',	'Smallmouth Bass',	'Spook Fish',	'Squid',	'Stingray',	'Stonefish',	'Sturgeon',	'Sunfish',	'Super Cucumber',	'Tiger Trout',	'Tilapia',	'Tuna',	'Void Salmon',	'Walleye',	'Woodskip']  # Your full list
+    filtered_options = [i for i in all_options if i.lower().startswith(option.lower())]
+    return filtered_options[:25]  # Slice to return only 25 options
+
+async def my_autocomplete3(ctx, option: str):
+    all_options = ["Universal", "Abigail", "Alex", "Caroline", "Clint", "Dwarf", "Demetrius", "Elliot", "Emily", "Evelyn", "George", "Gus", "Haley", "Harvey", "Jas", "Jodi", "Kent", "Krobus", "Leah", "Leo", "Lewis", "Linus", "Marnie", "Maru", "Pam", "Penny", "Pierre", "Robin", "Sam", "Sandy", "Sebastian", "Shane", "Vincent", "Willy", "Wizard"]
+    filtered_options = [i for i in all_options if i.lower().startswith(option.lower())]
+    return filtered_options[:25]  # Slice to return only 25 options
+
+async def my_autocomplete4(ctx, option: str):
+    all_options = ['Blue Jazz',	'Cauliflower',	'Garlic',	'Kale',	'Parsnip',	'Potato',	'Rhubarb',	'Tulip',	'Rice (Unmilled)',	'Rice (Milled)',	'Melon',	'Poppy',	'Radish',	'Red Cabbage',	'Starfruit',	'Spangle',	'Sunflower',	'Wheat',	'Wheat (Milled)',	'Amaranth',	'Artichoke',	'Beet',	'Bok Choy',	'Fairy Rose',	'Pumpkin',	'Yam',	'Sweet Gem Berry',	'Coffee Bean',	'Green Bean',	'Strawberry',	'Blueberry',	'Corn',	'Hops',	'Hot Pepper',	'Tomato',	'Cranberry','Eggplant',	'Grape',	'Ancient Fruit (Min Cost)',	'Ancient Fruit (Max Cost)',	'Cactus',	'Tea']
     filtered_options = [i for i in all_options if i.lower().startswith(option.lower())]
     return filtered_options[:25]  # Slice to return only 25 options
 
@@ -90,17 +101,21 @@ async def play_song(song):
     global timer
     current_song = song
     current_song_length = int(round(MP3(current_song).info.length))
-    await client.change_presence(activity=nextcord.Activity(type=nextcord.ActivityType.playing, name=SONGNAMES[SONGS.index(current_song.replace("./assets/soundtrack/", ""))]))
+    await client.change_presence(activity=nextcord.Activity(type=nextcord.ActivityType.playing, name=SONGNAMES[SONGS.index(current_song.replace("./assets/audio/", ""))]))
     voice_client=[]
+    guilds = []
     for guild in client.guilds:
         if not get(client.voice_clients, guild=guild):
             continue
         voice_client.append(get(client.voice_clients, guild=guild))
+        guilds.append(guild)
 
     for i in voice_client:
+        volume = i.source.volume
         i.stop()
         i.play(nextcord.FFmpegPCMAudio(current_song))
-    print(f'{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ":", "green")} Playing {SONGNAMES[SONGS.index(current_song.replace("./assets/soundtrack/", ""))]} for {datetime.timedelta(seconds=current_song_length)}')
+        i.source = nextcord.PCMVolumeTransformer(i.source, volume=volume)
+    print(f'{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ":", "green")} Playing {SONGNAMES[SONGS.index(current_song.replace("./assets/audio/", ""))]} for {datetime.timedelta(seconds=current_song_length)}')
     global timer
     timer = 0
     current_song_length = int(round(MP3(current_song).info.length))
@@ -112,24 +127,26 @@ async def play_song(song):
 
 async def loop():
     while True:
-        await play_song(f"./assets/soundtrack/{random.choice(SONGS)}")
+        await play_song(f"./assets/audio/{random.choice(SONGS)}")
 
-async def joinup(ctx):
+async def joinup(ctx, join=True):
     channel = ctx.author.voice.channel
-    vc = await channel.connect()
-    if current_song != "":
-        rand = random.randint(0, 100000)
-        audio_input = ffmpeg.input(current_song)
-        audio_cut = audio_input.audio.filter('atrim', start=timer)
-        audio_output = ffmpeg.output(audio_cut, f'./assets/trims/out{rand}.mp3', loglevel="quiet")
-        ffmpeg.run(audio_output)
-        vc.play(nextcord.FFmpegPCMAudio(f'./assets/trims/out{rand}.mp3'))
-        return f'./assets/trims/out{rand}.mp3'
+    if join:
+        await ctx.channel.send("```Joining...```")
+        vc = await channel.connect()
+    rand = random.randint(0, 100000)
+    audio_input = ffmpeg.input(current_song)
+    audio_cut = audio_input.audio.filter('atrim', start=timer)
+    audio_output = ffmpeg.output(audio_cut, f'./assets/out/out{rand}.mp3', loglevel="quiet")
+    ffmpeg.run(audio_output)
+    vc.play(nextcord.FFmpegPCMAudio(f'./assets/out/out{rand}.mp3'))
+    vc.source = nextcord.PCMVolumeTransformer(vc.source, volume=1.0)
+    return f'./assets/out/out{rand}.mp3'
     return None
 
-def cleartrims():
-    print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Cleared ./assets/trims contents")
-    folder = './assets/trims'
+def clearout():
+    print(f"{cs(str(datetime.datetime.now(tz).replace(microsecond=0)) + ':', 'green')} Cleared ./assets/out contents")
+    folder = './assets/out'
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         try:
@@ -164,10 +181,15 @@ class DailyAction(commands.Cog):
 
     @tasks.loop(minutes=30)
     async def clear(self):
-        cleartrims()
+        clearout()
 
 @client.command(aliases=["changevolume"], description= "Changes the volume of the radio.")
 async def volume(ctx, new_volume=None):
+    try:
+        exec(f"global paused{ctx.guild.id}")
+        eval(f"paused{ctx.guild.id}")
+    except:
+        exec(f"paused{ctx.guild.id}=False")
     if new_volume == None:
         await ctx.channel.send('```Please enter a whole number.```')
         return
@@ -182,9 +204,11 @@ async def volume(ctx, new_volume=None):
             await ctx.channel.send('```There is no channel connected.```')
         elif not ctx.guild.voice_client.source:
             await ctx.channel.send('```There is no song playing.```')
+        elif eval(f"paused{ctx.guild.id}"):
+            await ctx.channel.send(f'```Client is currently paused.```')
         else:
             ctx.guild.voice_client.source.volume = new_volume
-            await ctx.channel.send(f'```Set the volume to {new_volume}.```')
+            await ctx.channel.send(f'```Set the volume to {int(new_volume * 100)}.```')
     else:
         await ctx.channel.send('```Please enter a number between 0 and 100.```')
 
@@ -286,14 +310,81 @@ Difficulty:    {liked[13]}
     embed.add_field(name="Bundle", value=f"```{liked[14]}\t```")
     await ctx.send(embed=embed)
 
+@client.slash_command(description="Shows you an item's data",guild_ids=[1244302066600640613])
+async def crops(ctx: nextcord.Interaction, crop: str = nextcord.SlashOption(autocomplete_callback=my_autocomplete4)):
+    cursor_obj.execute("SELECT * FROM [crops] where Name = '%s'" % crop) 
+    liked = cursor_obj.fetchall()[0]
+    liked = list(liked)
+    liked.pop(0)
+    embed = nextcord.Embed(title=crop, color=0x70c725)
+    embed.add_field(name="Seed Cost", value=f"""```{liked[0]}```""")
+    embed.add_field(name="Selling Price", value=f"""```{liked[3]}```""")
+    if liked[4] != None:
+        embed.add_field(name="Profit Margin", value=f"""```{liked[4]}```""", inline=False)
+    else:
+        embed.add_field(name="Profit Margin/Season", value=f"""```{liked[5]}```""", inline=False)
+    embed.add_field(name="Growth Days", value=f"""```{liked[1]}```""")
+    if liked[2] != None:
+        embed.add_field(name="Regrowth Days", value=f"""```{liked[2]}```""")
+    embed.add_field(name="", value=f"""""", inline=False)
+    embed.add_field(name="Harvests/Season", value=f"""```{liked[6]}```""")
+    embed.add_field(name="Season", value=f"""```{liked[7]}```""")
+    await ctx.send(embed=embed)
+
 @client.command(description= "Sets the radio volume to zero.")
 async def mute(ctx):
+    try:
+        exec(f"global paused{ctx.guild.id}")
+        eval(f"paused{ctx.guild.id}")
+    except:
+        exec(f"paused{ctx.guild.id}=False")
     if not ctx.guild.voice_client:
         await ctx.channel.send('```There is no channel connected.```')
     elif not ctx.guild.voice_client.source:
         await ctx.channel.send('```There is no song playing.```')
+    elif eval(f"paused{ctx.guild.id}")==True:
+        await ctx.channel.send(f'```Client is currently paused.```')
     else:
         ctx.guild.voice_client.source.volume = 0
+        await ctx.channel.send(f'```Set the volume to 0.```')
+
+@client.command(description= "Pauses the radio.", aliases=["stop"])
+async def pause(ctx):
+    try:
+        exec(f"global paused{ctx.guild.id}")
+        eval(f"paused{ctx.guild.id}")
+    except:
+        exec(f"paused{ctx.guild.id}=False")
+    if not ctx.guild.voice_client:
+        await ctx.channel.send('```There is no channel connected.```')
+    elif not ctx.guild.voice_client.source:
+        await ctx.channel.send('```There is no song playing.```')
+    elif eval(f"paused{ctx.guild.id}")==True:
+        await ctx.channel.send(f'```Client is currently paused.```')
+    else:
+        ctx.guild.voice_client.source.volume = 0
+        exec(f"globals()['paused{ctx.guild.id}']=True")
+        exec(f"global paused{ctx.guild.id}")
+        await ctx.channel.send(f'```Paused.```')
+
+@client.command(description= "Unpauses the radio.", aliases=["unpause", "continue"])
+async def resume(ctx):
+    try:
+        exec(f"global paused{ctx.guild.id}")
+        eval(f"paused{ctx.guild.id}")
+    except:
+        exec(f"paused{ctx.guild.id}=False")
+    if not ctx.guild.voice_client:
+        await ctx.channel.send('```There is no channel connected.```')
+    elif not ctx.guild.voice_client.source:
+        await ctx.channel.send('```There is no song playing.```')
+    elif eval(f"paused{ctx.guild.id}")==False:
+        await ctx.channel.send(f'```Client is already unpaused.```')
+    else:
+        ctx.guild.voice_client.source.volume = 100
+        exec(f"globals()['paused{ctx.guild.id}']=False")
+        exec(f"global paused{ctx.guild.id}")
+        await ctx.channel.send(f'```Unpaused.```')
 
 @client.command(aliases=["tunein", "connect"], description= "Connects the bot to a voice channel.")
 async def join(ctx):
@@ -304,11 +395,9 @@ async def join(ctx):
             await ctx.channel.send("```I am already in.```")
         else:
             await ctx.guild.voice_client.disconnect()
-            out = await joinup(ctx)
-            await ctx.channel.send("```Joining...```")
+            await joinup(ctx)
     else:
-        out = await joinup(ctx)
-        await ctx.channel.send("```Joining...```")
+        await joinup(ctx)
             
 @client.command(aliases=["tuneout", "disconnect"], description= "Disconnects the bot from a voice channel.")
 async def leave(ctx):
@@ -318,8 +407,8 @@ async def leave(ctx):
     else:
         await ctx.channel.send("```There is no channel to tune out of.```")
 
-@client.slash_command(description="Shows you a character's gift chart.")
-async def characters(ctx: nextcord.Interaction, character: str = nextcord.SlashOption(name="character", description="A character to choose from", choices=["Universal", "Alex", "Elliot", "Harvey", "Sam", "Sebastian", "Shane", "Abigail", "Haley", "Leah", "Maru", "Penny", "Emily"])):
+@client.slash_command(description="Shows you a character's gift chart.", guild_ids=[1244302066600640613])
+async def characters(ctx: nextcord.Interaction, character: str = nextcord.SlashOption(autocomplete_callback=my_autocomplete3)):
     Neutral = eval(f"characterdata.{character}().Neutral")
     Dislike = eval(f"characterdata.{character}().Dislike")
     count1 = Neutral.count("\n")
@@ -345,22 +434,30 @@ async def characters(ctx: nextcord.Interaction, character: str = nextcord.SlashO
     embed.add_field(name="Neutral", value=Neutral)
     embed.add_field(name="Dislike", value=Dislike)
     embed.add_field(name="Hate", value=eval(f"characterdata.{character}().Hate"),inline=False)
+    if character != "Universal":
+        cursor_obj.execute("SELECT Birthday FROM [birthday] where People = '%s'" % character)
+        birthday = cursor_obj.fetchall()[0][0]
+        embed.add_field(name="Birthday", value=f"```{birthday}```",inline=False)
 
     await ctx.send(embed=embed)
 
-@client.slash_command(description="Shows this message.")
-async def help(ctx, command: str = nextcord.SlashOption(name="command", description="The bot's commands or categories", choices=["Home", "Radio Control", "Setup", "Tips", "mute", "volume", "join", "leave", "characters", "items" "help"])):
+@client.slash_command(description="Shows this message.", guild_ids=[1244302066600640613])
+async def help(ctx, command: str = nextcord.SlashOption(name="command", description="The bot's commands or categories", choices=["Home", "Radio Control", "Setup", "Tips", "help", "mute", "volume", "join", "leave", "characters", "items", "fish", "crops", "pause", "resume"])):
     if command == "Home":
         await ctx.send('''
 ```Radio Control:
-  mute   Sets the radio volume to zero.
-  volume Changes the volume of the radio.
+  r!mute   Sets the radio volume to zero.
+  r!volume Changes the volume of the radio.
+  r!pause  Pauses the radio.
+  r!resume Unpauses the radio.
 Setup:
-  join   Connects the bot to a voice channel.
-  leave  Disconnects the bot from a voice channel.
+  r!join   Connects the bot to a voice channel.
+  r!leave  Disconnects the bot from a voice channel.
 Tips:
   /characters Shows you a character's gift chart.
-  /items Shows you an item's gift chart.
+  /items      Shows you an item's gift chart.
+  /fish       Shows you a fish's data chart
+  /crops      Shows you a crop's data chart
 Other:
   /help  Shows this message.
 
@@ -371,21 +468,24 @@ Any command marked with a / is a slash command.```
     elif command == "Radio Control":
         await ctx.send('''
 ```Radio Control:
-  mute   Sets the radio volume to zero.
-  volume Changes the volume of the radio.```
+  r!mute   Sets the radio volume to zero.
+  r!volume Changes the volume of the radio.
+  r!pause  Pauses the radio.
+  r!resume Unpauses the radio.```
 ''')
     elif command == "Setup":
         await ctx.send('''
 ```Setup:
-  join   Connects the bot to a voice channel
-  leave  Disconnects the bot from a voice channel.```
+  r!join   Connects the bot to a voice channel
+  r!leave  Disconnects the bot from a voice channel.```
 ''')
     elif command == "Tips":
         await ctx.send('''
 ```Tips:
-  /characters Shows you a character's gift chart.
-  /items Shows you an item's gift chart.
-  /fish Shows you a fish's data.```
+  /characters   Shows you a character's gift chart.
+  /items        Shows you an item's gift chart.
+  /fish         Shows you a fish's data.
+  /crops        Shows you a crop's data chart```
 ''')
     elif command == "volume":
         await ctx.send('''
@@ -395,13 +495,19 @@ r!volume <new_volume>
 
 Changes the volume of the radio.```
 ''')
+    elif command == "crops":
+        await ctx.send('''
+```/crops <crop>
+
+Shows you a crop's data chart.```
+''')
     elif command == "items":
         await ctx.send('''
 ```/items <item>
 
 Shows you an item's gift chart.```
 ''')
-    elif command == "items":
+    elif command == "fish":
         await ctx.send('''
 ```/fish <fish>
 

@@ -1,5 +1,5 @@
 env
 __pycache__
-assets/trims
+assets/out
 assets/data.db
-notes
+notes.txt
