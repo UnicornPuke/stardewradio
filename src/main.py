@@ -98,10 +98,12 @@ async def play_song(song):
     current_song_length = int(round(MP3(current_song).info.length))
     await client.change_presence(activity=nextcord.Activity(type=nextcord.ActivityType.playing, name=SONGNAMES[SONGS.index(current_song.replace("./assets/audio/", ""))]))
     voice_client=[]
+    guilds = []
     for guild in client.guilds:
         if not get(client.voice_clients, guild=guild):
             continue
         voice_client.append(get(client.voice_clients, guild=guild))
+        guilds.append(guild)
 
     for i in voice_client:
         volume = i.source.volume
@@ -122,19 +124,19 @@ async def loop():
     while True:
         await play_song(f"./assets/audio/{random.choice(SONGS)}")
 
-async def joinup(ctx):
+async def joinup(ctx, join=True):
     channel = ctx.author.voice.channel
-    await ctx.channel.send("```Joining...```")
-    vc = await channel.connect()
-    if current_song != "":
-        rand = random.randint(0, 100000)
-        audio_input = ffmpeg.input(current_song)
-        audio_cut = audio_input.audio.filter('atrim', start=timer)
-        audio_output = ffmpeg.output(audio_cut, f'./assets/out/out{rand}.mp3', loglevel="quiet")
-        ffmpeg.run(audio_output)
-        vc.play(nextcord.FFmpegPCMAudio(f'./assets/out/out{rand}.mp3'))
-        vc.source = nextcord.PCMVolumeTransformer(vc.source, volume=1.0)
-        return f'./assets/out/out{rand}.mp3'
+    if join:
+        await ctx.channel.send("```Joining...```")
+        vc = await channel.connect()
+    rand = random.randint(0, 100000)
+    audio_input = ffmpeg.input(current_song)
+    audio_cut = audio_input.audio.filter('atrim', start=timer)
+    audio_output = ffmpeg.output(audio_cut, f'./assets/out/out{rand}.mp3', loglevel="quiet")
+    ffmpeg.run(audio_output)
+    vc.play(nextcord.FFmpegPCMAudio(f'./assets/out/out{rand}.mp3'))
+    vc.source = nextcord.PCMVolumeTransformer(vc.source, volume=1.0)
+    return f'./assets/out/out{rand}.mp3'
     return None
 
 def clearout():
@@ -178,6 +180,11 @@ class DailyAction(commands.Cog):
 
 @client.command(aliases=["changevolume"], description= "Changes the volume of the radio.")
 async def volume(ctx, new_volume=None):
+    try:
+        exec(f"global paused{ctx.guild.id}")
+        eval(f"paused{ctx.guild.id}")
+    except:
+        exec(f"paused{ctx.guild.id}=False")
     if new_volume == None:
         await ctx.channel.send('```Please enter a whole number.```')
         return
@@ -192,6 +199,8 @@ async def volume(ctx, new_volume=None):
             await ctx.channel.send('```There is no channel connected.```')
         elif not ctx.guild.voice_client.source:
             await ctx.channel.send('```There is no song playing.```')
+        elif eval(f"paused{ctx.guild.id}"):
+            await ctx.channel.send(f'```Client is currently paused.```')
         else:
             ctx.guild.voice_client.source.volume = new_volume
             await ctx.channel.send(f'```Set the volume to {int(new_volume * 100)}.```')
@@ -319,12 +328,58 @@ async def crops(ctx: nextcord.Interaction, crop: str = nextcord.SlashOption(auto
 
 @client.command(description= "Sets the radio volume to zero.")
 async def mute(ctx):
+    try:
+        exec(f"global paused{ctx.guild.id}")
+        eval(f"paused{ctx.guild.id}")
+    except:
+        exec(f"paused{ctx.guild.id}=False")
     if not ctx.guild.voice_client:
         await ctx.channel.send('```There is no channel connected.```')
     elif not ctx.guild.voice_client.source:
         await ctx.channel.send('```There is no song playing.```')
+    elif eval(f"paused{ctx.guild.id}")==True:
+        await ctx.channel.send(f'```Client is currently paused.```')
     else:
+        ctx.guild.voice_client.source.volume = 0
         await ctx.channel.send(f'```Set the volume to 0.```')
+
+@client.command(description= "Pauses the radio.", aliases=["stop"])
+async def pause(ctx):
+    try:
+        exec(f"global paused{ctx.guild.id}")
+        eval(f"paused{ctx.guild.id}")
+    except:
+        exec(f"paused{ctx.guild.id}=False")
+    if not ctx.guild.voice_client:
+        await ctx.channel.send('```There is no channel connected.```')
+    elif not ctx.guild.voice_client.source:
+        await ctx.channel.send('```There is no song playing.```')
+    elif eval(f"paused{ctx.guild.id}")==True:
+        await ctx.channel.send(f'```Client is currently paused.```')
+    else:
+        ctx.guild.voice_client.source.volume = 0
+        exec(f"globals()['paused{ctx.guild.id}']=True")
+        exec(f"global paused{ctx.guild.id}")
+        await ctx.channel.send(f'```Paused.```')
+
+@client.command(description= "Unpauses the radio.", aliases=["unpause", "continue"])
+async def resume(ctx):
+    try:
+        exec(f"global paused{ctx.guild.id}")
+        eval(f"paused{ctx.guild.id}")
+    except:
+        exec(f"paused{ctx.guild.id}=False")
+    if not ctx.guild.voice_client:
+        await ctx.channel.send('```There is no channel connected.```')
+    elif not ctx.guild.voice_client.source:
+        await ctx.channel.send('```There is no song playing.```')
+    elif eval(f"paused{ctx.guild.id}")==False:
+        await ctx.channel.send(f'```Client is already unpaused.```')
+    else:
+        ctx.guild.voice_client.source.volume = 100
+        exec(f"globals()['paused{ctx.guild.id}']=False")
+        exec(f"global paused{ctx.guild.id}")
+        await ctx.channel.send(f'```Unpaused.```')
 
 @client.command(aliases=["tunein", "connect"], description= "Connects the bot to a voice channel.")
 async def join(ctx):
@@ -341,7 +396,6 @@ async def join(ctx):
             
 @client.command(aliases=["tuneout", "disconnect"], description= "Disconnects the bot from a voice channel.")
 async def leave(ctx):
-    cursor_obj.close()
     if ctx.guild.voice_client:
         await ctx.guild.voice_client.disconnect()
         await ctx.channel.send("```Leaving...```")
@@ -383,12 +437,14 @@ async def characters(ctx: nextcord.Interaction, character: str = nextcord.SlashO
     await ctx.send(embed=embed)
 
 @client.slash_command(description="Shows this message.", guild_ids=[1244302066600640613])
-async def help(ctx, command: str = nextcord.SlashOption(name="command", description="The bot's commands or categories", choices=["Home", "Radio Control", "Setup", "Tips", "help", "mute", "volume", "join", "leave", "characters", "items", "fish", "crops"])):
+async def help(ctx, command: str = nextcord.SlashOption(name="command", description="The bot's commands or categories", choices=["Home", "Radio Control", "Setup", "Tips", "help", "mute", "volume", "join", "leave", "characters", "items", "fish", "crops", "pause", "resume"])):
     if command == "Home":
         await ctx.send('''
 ```Radio Control:
   r!mute   Sets the radio volume to zero.
   r!volume Changes the volume of the radio.
+  r!pause  Pauses the radio.
+  r!resume Unpauses the radio.
 Setup:
   r!join   Connects the bot to a voice channel.
   r!leave  Disconnects the bot from a voice channel.
@@ -407,14 +463,16 @@ Any command marked with a / is a slash command.```
     elif command == "Radio Control":
         await ctx.send('''
 ```Radio Control:
-  mute   Sets the radio volume to zero.
-  volume Changes the volume of the radio.```
+  r!mute   Sets the radio volume to zero.
+  r!volume Changes the volume of the radio.
+  r!pause  Pauses the radio.
+  r!resume Unpauses the radio.```
 ''')
     elif command == "Setup":
         await ctx.send('''
 ```Setup:
-  join   Connects the bot to a voice channel
-  leave  Disconnects the bot from a voice channel.```
+  r!join   Connects the bot to a voice channel
+  r!leave  Disconnects the bot from a voice channel.```
 ''')
     elif command == "Tips":
         await ctx.send('''
