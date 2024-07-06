@@ -399,6 +399,34 @@ async def join(ctx):
             await joinup(ctx)
     else:
         await joinup(ctx)
+
+
+@client.command(aliases=["changes"], description= "Connects the bot to a voice channel.")
+async def changelog(ctx):
+    f = open("CHANGELOG.md", "r")
+    f = f.read().replace("- ", "").split("#")
+    changes = []
+    for i in f:
+        changes.append(i.split("\n"))
+    changes.pop(0)
+    changes2 = []
+    for i in changes:
+        exec(f"change{changes.index(i)} = ''")
+        for e in i:
+            if i.index(e) != 0:
+                exec(f"""change{changes.index(i)} += '''\n{e}'''""")
+            else:
+                exec(f"""change{changes.index(i)} = '''{e}'''""")
+                changes2.append(eval(f"change{changes.index(i)}"))
+                exec(f"change{changes.index(i)} = ''")
+        changes2.append(eval(f"change{changes.index(i)}"))
+    embed = nextcord.Embed(title="Changelog", color=0x70c725)
+    for i in changes2:
+        if changes2.index(i) % 2 == 0:
+            embed.add_field(name=i,value=f"```{changes2[changes2.index(i)+1]}```", inline=False)
+    await ctx.send(embed=embed)
+
+    # await ctx.send(f"```{f.read()}```")
             
 @client.command(aliases=["tuneout", "disconnect"], description= "Disconnects the bot from a voice channel.")
 async def leave(ctx):
@@ -447,20 +475,21 @@ async def help(ctx, command: str = nextcord.SlashOption(name="command", descript
     if command == "Home":
         await ctx.send('''
 ```Radio Control:
-  r!mute   Sets the radio volume to zero.
-  r!volume Changes the volume of the radio.
-  r!pause  Pauses the radio.
-  r!resume Unpauses the radio.
+  r!mute      Sets the radio volume to zero.
+  r!volume    Changes the volume of the radio.
+  r!pause     Pauses the radio.
+  r!resume    Unpauses the radio.
 Setup:
-  r!join   Connects the bot to a voice channel.
-  r!leave  Disconnects the bot from a voice channel.
+  r!join      Connects the bot to a voice channel.
+  r!leave     Disconnects the bot from a voice channel.
 Tips:
   /characters Shows you a character's gift chart.
   /items      Shows you an item's gift chart.
   /fish       Shows you a fish's data chart
   /crops      Shows you a crop's data chart
 Other:
-  /help  Shows this message.
+  /help       Shows this message.
+  r!changelog Shows the changelog.
 
 Type /help command for more info on a command.
 You can also type /help category for more info on a category
