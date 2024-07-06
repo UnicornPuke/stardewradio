@@ -21,9 +21,7 @@ jobs:
         source env/bin/activate
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Run bot
+    - name: Copy token
       run: |
         cp /home/adam/token.txt env/.env
-        source env/bin/activate
-        dtach -n /tmp/socket python src/main.py main
         
