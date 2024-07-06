@@ -24,13 +24,4 @@ jobs:
         source env/bin/activate
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-  run:
-
-    runs-on: self-hosted
-
-    steps:
-    - name: Run bot
-      run: |
         cp /home/adam/token.txt env/.env
-        source env/bin/activate
-        python src/main.py main
