@@ -32,6 +32,6 @@ jobs:
     - name: Run bot
       run: |
         cp /home/adam/token.txt env/.env
-        mkdir assets/out
+        if [! -d "assets/out"]; then mkdir assets/out
         source env/bin/activate
         python src/main.py main
