@@ -17,19 +17,13 @@ jobs:
     steps:
     - name: Kill previous iteration
       run: |
-        pkill main.py
+        pkill python
     - name: Install dependencies
       run: |
         python3 -m venv env
         source env/bin/activate
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-  run:
-
-    runs-on: self-hosted
-
-    steps:
     - name: Run bot
       run: |
         cp /home/adam/token.txt env/.env
