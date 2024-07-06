@@ -25,5 +25,5 @@ jobs:
       run: |
         cp /home/adam/token.txt env/.env
         source env/bin/activate
-        nohup python src/main.py main >> /home/adam/out.txt &
+        dtach -n /tmp/socket python src/main.py main
         
