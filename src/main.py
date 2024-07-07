@@ -285,6 +285,10 @@ async def items(ctx: nextcord.Interaction, item: str = nextcord.SlashOption(auto
     embed.add_field(name="Hates", value=Hate, inline= False)
     await ctx.send(embed=embed)
 
+@client.slash_command(description="Sets channels where the bot can be interacted with.")
+async def setchannels(ctx: nextcord.Interaction):
+    await ctx.send("<stdin>")
+
 @client.slash_command(description="Shows you an item's data")
 async def fish(ctx: nextcord.Interaction, fish: str = nextcord.SlashOption(autocomplete_callback=my_autocomplete2)):
     cursor_obj.execute("SELECT * FROM [fish] where Fish = '%s'" % fish) 
@@ -471,25 +475,27 @@ async def characters(ctx: nextcord.Interaction, character: str = nextcord.SlashO
     await ctx.send(embed=embed)
 
 @client.slash_command(description="Shows this message.", guild_ids=[1244302066600640613])
-async def help(ctx, command: str = nextcord.SlashOption(name="command", description="The bot's commands or categories", choices=["Home", "Radio Control", "Setup", "Tips", "help", "mute", "volume", "join", "leave", "characters", "items", "fish", "crops", "pause", "resume"])):
+async def help(ctx, command: str = nextcord.SlashOption(name="command", description="The bot's commands or categories", choices=["Home", "Radio Control", "Setup", "Tips", "Admin", "setchannels", "help", "mute", "volume", "join", "leave", "characters", "items", "fish", "crops", "pause", "resume"])):
     if command == "Home":
         await ctx.send('''
 ```Radio Control:
-  r!mute      Sets the radio volume to zero.
-  r!volume    Changes the volume of the radio.
-  r!pause     Pauses the radio.
-  r!resume    Unpauses the radio.
+  r!mute       Sets the radio volume to zero.
+  r!volume     Changes the volume of the radio.
+  r!pause      Pauses the radio.
+  r!resume     Unpauses the radio.
 Setup:
-  r!join      Connects the bot to a voice channel.
-  r!leave     Disconnects the bot from a voice channel.
+  r!join       Connects the bot to a voice channel.
+  r!leave      Disconnects the bot from a voice channel.
 Tips:
-  /characters Shows you a character's gift chart.
-  /items      Shows you an item's gift chart.
-  /fish       Shows you a fish's data chart
-  /crops      Shows you a crop's data chart
+  /characters  Shows you a character's gift chart.
+  /items       Shows you an item's gift chart.
+  /fish        Shows you a fish's data chart
+  /crops       Shows you a crop's data chart
+Admin:
+  /setchannels Sets channels where the bot can be interacted with.
 Other:
-  /help       Shows this message.
-  r!changelog Shows the changelog.
+  /help        Shows this message.
+  r!changelog  Shows the changelog.
 
 Type /help command for more info on a command.
 You can also type /help category for more info on a category
@@ -506,8 +512,13 @@ Any command marked with a / is a slash command.```
     elif command == "Setup":
         await ctx.send('''
 ```Setup:
-  r!join   Connects the bot to a voice channel
+  r!join   Connects the bot to a voice channel.
   r!leave  Disconnects the bot from a voice channel.```
+''')
+    elif command == "Admin":
+        await ctx.send('''
+```Setup:
+  /setchannels Sets channels where the bot can be interacted with.```
 ''')
     elif command == "Tips":
         await ctx.send('''
@@ -530,6 +541,12 @@ Changes the volume of the radio.```
 ```/crops <crop>
 
 Shows you a crop's data chart.```
+''')
+    elif command == "setchannels":
+        await ctx.send('''
+```/setchannels
+
+Sets channels where the bot can be interacted with.```
 ''')
     elif command == "items":
         await ctx.send('''
